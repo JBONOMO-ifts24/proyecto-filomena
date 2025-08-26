@@ -14,9 +14,18 @@ app.use(express.json());
 const usuarioRoutes = require('./routes/usuarios.routes');
 const authRoutes = require('./routes/auth.routes');
 const tipoProductoRoutes = require('./routes/tipoProducto.routes');
+const modeloProductoRoutes = require('./routes/modeloProducto.routes');
+const productoRoutes = require('./routes/producto.routes');
+const imagenRoutes = require('./routes/imagen.routes');
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
 app.use('/api', tipoProductoRoutes);
+app.use('/api', modeloProductoRoutes);
+app.use('/api', productoRoutes);
+app.use('/api', imagenRoutes);
+
+// Servir archivos estáticos de la carpeta uploads
+app.use('/uploads', express.static('uploads'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
