@@ -13,8 +13,10 @@ app.use(express.json());
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuarios.routes');
 const authRoutes = require('./routes/auth.routes');
+const tipoProductoRoutes = require('./routes/tipoProducto.routes');
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
+app.use('/api', tipoProductoRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

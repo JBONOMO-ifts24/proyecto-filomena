@@ -1,5 +1,7 @@
+
 const sequelize = require('./db/sequelize');
 require('./models/Usuario');
+require('./models/Tipo_Producto');
 
 sequelize.sync({ force: true }).then(() => {
   console.log('¡Tablas recreadas!');
