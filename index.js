@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 
 const sequelize = require('./db/sequelize');
@@ -17,12 +18,14 @@ const tipoProductoRoutes = require('./routes/tipoProducto.routes');
 const modeloProductoRoutes = require('./routes/modeloProducto.routes');
 const productoRoutes = require('./routes/producto.routes');
 const imagenRoutes = require('./routes/imagen.routes');
+const eventoRoutes = require('./routes/eventoRoutes');
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
 app.use('/api', tipoProductoRoutes);
 app.use('/api', modeloProductoRoutes);
 app.use('/api', productoRoutes);
 app.use('/api', imagenRoutes);
+app.use('/api/eventos', eventoRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
 app.use('/uploads', express.static('uploads'));

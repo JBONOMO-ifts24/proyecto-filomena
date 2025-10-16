@@ -16,9 +16,9 @@ exports.crearModeloProducto = async (req, res) => {
   }
 };
 
-exports.listarModeloProductos = async (req, res) => {
+exports.listarModelosProducto = async (req, res) => {
   try {
-    const modelos = await ModeloProducto.findAll({ include: [{ model: TipoProducto, as: 'tipo_producto' }] });
+    const modelos = await ModeloProducto.findAll();
     res.json(modelos);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -30,9 +30,9 @@ exports.eliminarModeloProducto = async (req, res) => {
     const { id } = req.params;
     const eliminado = await ModeloProducto.destroy({ where: { id } });
     if (!eliminado) {
-      return res.status(404).json({ error: 'Modelo de producto no encontrado' });
+      return res.status(404).json({ error: 'Modelo no encontrado' });
     }
-    res.json({ mensaje: 'Modelo de producto eliminado' });
+    res.json({ mensaje: 'Modelo eliminado' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -41,16 +41,9 @@ exports.eliminarModeloProducto = async (req, res) => {
 exports.modificarModeloProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tipoProductoId } = req.body;
-    if (tipoProductoId) {
-      const tipo = await TipoProducto.findByPk(tipoProductoId);
-      if (!tipo) {
-        return res.status(400).json({ error: 'Tipo de producto no válido' });
-      }
-    }
     const [actualizados] = await ModeloProducto.update(req.body, { where: { id } });
     if (!actualizados) {
-      return res.status(404).json({ error: 'Modelo de producto no encontrado' });
+      return res.status(404).json({ error: 'Modelo no encontrado' });
     }
     const modeloActualizado = await ModeloProducto.findByPk(id);
     res.json(modeloActualizado);

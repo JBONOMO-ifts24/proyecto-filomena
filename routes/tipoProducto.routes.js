@@ -1,15 +1,13 @@
 const express = require('express');
 const { crearTipoProducto, eliminarTipoProducto, listarTipoProductos, modificarTipoProducto } = require('../controllers/tipoProductoController');
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const { verifyToken, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Solo usuarios autorizados pueden agregar, eliminar y listar
-
-router.post('/tipoproductos', auth, admin, crearTipoProducto);
-router.put('/tipoproductos/:id', auth, admin, modificarTipoProducto);
-router.delete('/tipoproductos/:id', auth, admin, eliminarTipoProducto);
-router.get('/tipoproductos', auth, admin, listarTipoProductos);
+// Solo admins pueden agregar, eliminar, modificar y listar
+router.post('/tipoproductos', verifyToken, adminOnly, crearTipoProducto);
+router.put('/tipoproductos/:id', verifyToken, adminOnly, modificarTipoProducto);
+router.delete('/tipoproductos/:id', verifyToken, adminOnly, eliminarTipoProducto);
+router.get('/tipoproductos', verifyToken, adminOnly, listarTipoProductos);
 
 module.exports = router;

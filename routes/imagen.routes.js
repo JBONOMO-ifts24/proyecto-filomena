@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const { subirImagen, listarImagenesPorProducto, eliminarImagen } = require('../controllers/imagenController');
-const auth = require('../middleware/auth');
+const { verifyToken, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -19,10 +19,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Subir imagen (protegido)
-router.post('/imagenes', auth, upload.single('imagen'), subirImagen);
-// Listar imágenes de un producto (protegido)
-router.get('/imagenes/:productoId', auth, listarImagenesPorProducto);
+router.post('/imagenes', verifyToken,adminOnly, upload.single('imagen'), subirImagen);
+// Listar imágenes de un producto
+router.get('/imagenes/:productoId', listarImagenesPorProducto);
 // Eliminar imagen (protegido)
-router.delete('/imagenes/:id', auth, eliminarImagen);
+router.delete('/imagenes/:id', verifyToken,adminOnly, eliminarImagen);
 
 module.exports = router;

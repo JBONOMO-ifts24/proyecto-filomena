@@ -1,14 +1,10 @@
 const express = require('express');
-
-const { crearUsuario, obtenerUsuarios, suspenderUsuario } = require('../controllers/usuarioController');
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
-
 const router = express.Router();
+const usuarioController = require('../controllers/usuarioController'); // debe exportar funciones
 
-
-router.post('/usuarios', crearUsuario);
-router.get('/usuarios', auth, obtenerUsuarios);
-router.put('/usuarios/:id/suspender', auth, admin, suspenderUsuario);
+// Ejemplo de rutas: PASAR la función, NO invocar (sin paréntesis)
+router.get('/usuarios', usuarioController.obtenerUsuarios);
+router.post('/usuarios', usuarioController.crearUsuario);
+router.delete('/usuarios/:id', usuarioController.suspenderUsuario);
 
 module.exports = router;

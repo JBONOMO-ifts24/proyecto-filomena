@@ -1,7 +1,6 @@
 const Imagen = require('../models/Imagen');
 const Producto = require('../models/Producto');
 const path = require('path');
-
 exports.subirImagen = async (req, res) => {
   try {
     const { productoId } = req.body;
