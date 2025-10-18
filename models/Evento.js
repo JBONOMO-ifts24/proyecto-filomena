@@ -26,6 +26,25 @@ const Evento = sequelize.define('Evento', {
   horario: {
     type: DataTypes.TIME,
     allowNull: false
+  },
+  repite: {
+    type: DataTypes.ENUM(
+      'semanal',
+      'quincenal',
+      'mensual',
+      'bimensual',
+      'trimestral',
+      'semestral',
+      'anual',
+      'a discreción',
+      'No'
+    ),
+    allowNull: false,
+    defaultValue: 'No'
+  },
+  imagen: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 });
 
