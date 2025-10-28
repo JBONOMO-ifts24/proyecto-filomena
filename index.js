@@ -8,8 +8,9 @@ const PORT = process.env.PORT || 3000;
 
 
 
-// Middleware para parsear JSON
-app.use(express.json());
+// Middleware para parsear JSON y urlencoded (antes de montar rutas)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuarios.routes');
@@ -39,7 +40,8 @@ app.get('/', (req, res) => {
 sequelize.authenticate()
   .then(() => {
     console.log('Conexión a la base de datos exitosa.');
-    return sequelize.sync();
+    // return sequelize.sync();
+    return sequelize.sync({ alter: true }); // <- agrega columnas/ajusta esquema sin borrar datos
   })
   .then(() => {
     app.listen(PORT, () => {

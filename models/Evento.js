@@ -39,13 +39,25 @@ const Evento = sequelize.define('Evento', {
       'a discreción',
       'No'
     ),
-    allowNull: false,
+    allowNull: true,
     defaultValue: 'No'
   },
   imagen: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Usuario', // nombre de la tabla users; ajusta si tu tabla tiene otro nombre
+      key: 'id'
+    }
   }
 });
+
+// Asociación (permite usar include en consultas)
+const Usuario = require('./Usuario');
+Evento.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'creador' });
 
 module.exports = Evento;
