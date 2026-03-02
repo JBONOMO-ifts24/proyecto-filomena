@@ -17,12 +17,16 @@ const tipoProductoRoutes = require('./routes/tipoProducto.routes');
 const modeloProductoRoutes = require('./routes/modeloProducto.routes');
 const productoRoutes = require('./routes/producto.routes');
 const imagenRoutes = require('./routes/imagen.routes');
+const eventoRoutes = require('./routes/evento.routes');
+const posteoRoutes = require('./routes/posteo.routes');
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
 app.use('/api', tipoProductoRoutes);
 app.use('/api', modeloProductoRoutes);
 app.use('/api', productoRoutes);
 app.use('/api', imagenRoutes);
+app.use('/api', eventoRoutes);
+app.use('/api', posteoRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
 app.use('/uploads', express.static('uploads'));
