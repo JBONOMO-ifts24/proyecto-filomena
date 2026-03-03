@@ -1,0 +1,69 @@
+{% extends "layout.njk" %}
+
+{% block title %}Catálogo - Filomena Arte y Diseño{% endblock %}
+
+{% block content %}
+<div style="margin-top: 2rem;">
+    <h1 style="color: var(--primary-color); font-size: 2.5rem; text-align: center; margin-bottom: 2.5rem;">Nuestro Catálogo</h1>
+
+    {% if categorias.length == 0 %}
+        <p style="text-align: center; color: var(--text-light); font-size: 1.1rem;">Aún no hay categorías disponibles en la tienda.</p>
+    {% else %}
+        {% for categoria in categorias %}
+            <div style="margin-bottom: 4rem;">
+                <h2 style="color: var(--accent-color); font-size: 2rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                    {{ categoria.nombre }}
+                    <span style="font-size: 1rem; color: var(--text-light); font-weight: normal; margin-left: 10px;">({{ categoria.descripcion }})</span>
+                </h2>
+
+                {% if categoria.modelos.length == 0 %}
+                    <p style="color: var(--text-light); font-style: italic;">No hay modelos para esta categoría.</p>
+                {% else %}
+                    {% for modelo in categoria.modelos %}
+                        <div style="margin-bottom: 2.5rem; padding-left: 1rem; border-left: 4px solid var(--glass-border);">
+                            <h3 style="color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1rem;">
+                                Modelo {{ modelo.nombre }} <span style="font-size: 0.9rem; color: var(--text-light);">({{ modelo.codigo }})</span>
+                            </h3>
+                            
+                            {% if modelo.productos.length == 0 %}
+                                <p style="color: var(--text-light); font-style: italic; margin-left: 1rem;">Próximamente productos para este modelo.</p>
+                            {% else %}
+                                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
+                                    {% for producto in modelo.productos %}
+                                        <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 280px; overflow: hidden; transition: transform 0.3s ease;">
+                                            <!-- Galeria de Imagenes del Producto -->
+                                            <div style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                                {% if producto.imagenes.length > 0 %}
+                                                    <img src="{{ producto.imagenes[0].url }}" alt="{{ producto.imagenes[0].descripcion }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {% else %}
+                                                    <span style="color: #999;">Sin imagen</span>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <!-- Info del Producto -->
+                                            <div style="padding: 1.5rem;">
+                                                <h4 style="color: var(--primary-color); font-size: 1.2rem; margin-bottom: 0.5rem;">{{ producto.nombre }}</h4>
+                                                <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem; min-height: 40px;">{{ producto.descripcion }}</p>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 600;">
+                                                    <span style="color: var(--accent-color);">Código: {{ producto.codigo }}</span>
+                                                    <span style="color: {{ 'green' if producto.cantidad > 0 else 'red' }};">
+                                                        {% if producto.cantidad > 0 %}
+                                                            Stock: {{ producto.cantidad }}
+                                                        {% else %}
+                                                            Agotado
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

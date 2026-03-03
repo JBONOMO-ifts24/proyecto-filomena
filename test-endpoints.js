@@ -183,8 +183,20 @@ async function runTests() {
         if (res.status !== 201) throw new Error('Error Comentario: ' + JSON.stringify(comentarioData));
         console.log('  -> Comentario agregado con id:', comentarioData.id);
 
-        // 11. Subir y Listar Imagenes
-        console.log('[11/11] Subiendo Imagen...');
+        // 11. Eliminar Comentario (Como Admin)
+        console.log('[11/12] Eliminando Comentario (Admin)...');
+        res = await fetch(`${API_URL}/comentarios/${comentarioData.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}` // Token de Admin
+            }
+        });
+        const deleteComData = await res.json();
+        if (res.status !== 200) throw new Error('Error Eliminando Comentario: ' + JSON.stringify(deleteComData));
+        console.log('  -> Comentario eliminado con éxito.');
+
+        // 12. Subir y Listar Imagenes
+        console.log('[12/12] Subiendo Imagen...');
         fs.writeFileSync(`dummy_${sfx}.jpg`, 'fake image data');
         const imageBlob = new Blob([fs.readFileSync(`dummy_${sfx}.jpg`)], { type: 'image/jpeg' });
         const formData = new FormData();

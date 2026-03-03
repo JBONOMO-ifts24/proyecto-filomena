@@ -1,14 +1,25 @@
 const express = require('express');
-
+const nunjucks = require('nunjucks');
+const path = require('path');
 const sequelize = require('./db/sequelize');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuración de Nunjucks
+nunjucks.configure('views', {
+  autoescape: true,
+  express: app,
+  watch: true
+});
+app.set('view engine', 'njk');
 
+// Middleware para servir archivos estáticos (CSS, JS cliente, Imágenes del front)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para parsear JSON
+// Middleware para parsear JSON y urlencoded (formularios HTML)
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuarios.routes');
@@ -19,6 +30,8 @@ const productoRoutes = require('./routes/producto.routes');
 const imagenRoutes = require('./routes/imagen.routes');
 const eventoRoutes = require('./routes/evento.routes');
 const posteoRoutes = require('./routes/posteo.routes');
+const viewsRoutes = require('./routes/views.routes');
+
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
 app.use('/api', tipoProductoRoutes);
@@ -27,14 +40,12 @@ app.use('/api', productoRoutes);
 app.use('/api', imagenRoutes);
 app.use('/api', eventoRoutes);
 app.use('/api', posteoRoutes);
+app.use('/', viewsRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
 app.use('/uploads', express.static('uploads'));
 
-// Ruta de prueba
-app.get('/', (req, res) => {
-  res.send('¡API funcionando!');
-});
+// (La ruta '/' será manejada ahora por views.routes)
 
 // Sincronizar modelos y arrancar servidor
 sequelize.authenticate()
