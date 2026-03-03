@@ -4,6 +4,8 @@ const TipoProducto = require('../models/Tipo_Producto');
 const ModeloProducto = require('../models/ModeloProducto');
 const Producto = require('../models/Producto');
 const Imagen = require('../models/Imagen');
+const Evento = require('../models/Evento');
+const Usuario = require('../models/Usuario');
 
 // Ruta principal (Home)
 router.get('/', (req, res) => {
@@ -33,6 +35,20 @@ router.get('/catalogo', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al cargar el catálogo');
+    }
+});
+
+// Ruta de Eventos
+router.get('/eventos', async (req, res) => {
+    try {
+        const eventos = await Evento.findAll({
+            include: [{ model: Usuario, as: 'creador', attributes: ['nombre', 'apellido'] }],
+            order: [['fecha_hora', 'ASC']]
+        });
+        res.render('eventos', { eventos });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al cargar los eventos');
     }
 });
 

@@ -1,17 +1,23 @@
 const express = require('express');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const dayjs = require('dayjs');
 const sequelize = require('./db/sequelize');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuración de Nunjucks
-nunjucks.configure('views', {
+const env = nunjucks.configure('views', {
   autoescape: true,
   express: app,
   watch: true
 });
+
+env.addFilter('date', (date, format) => {
+  return dayjs(date).format(format);
+});
+
 app.set('view engine', 'njk');
 
 // Middleware para servir archivos estáticos (CSS, JS cliente, Imágenes del front)
