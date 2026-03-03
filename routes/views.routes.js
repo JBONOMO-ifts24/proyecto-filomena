@@ -6,6 +6,9 @@ const Producto = require('../models/Producto');
 const Imagen = require('../models/Imagen');
 const Evento = require('../models/Evento');
 const Usuario = require('../models/Usuario');
+const Posteo = require('../models/Posteo');
+const Comentario = require('../models/Comentario');
+const MensajeContacto = require('../models/MensajeContacto');
 
 // Ruta principal (Home)
 router.get('/', (req, res) => {
@@ -50,6 +53,46 @@ router.get('/eventos', async (req, res) => {
         console.error(err);
         res.status(500).send('Error al cargar los eventos');
     }
+});
+
+// Ruta de Blog (Posteos)
+router.get('/blog', async (req, res) => {
+    try {
+        const posteos = await Posteo.findAll({
+            include: [
+                { model: Usuario, as: 'autor', attributes: ['nombreUsuario'] },
+                {
+                    model: Comentario,
+                    as: 'comentarios',
+                    include: [{ model: Usuario, as: 'autor', attributes: ['nombreUsuario'] }]
+                }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+        res.render('blog', { posteos });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al cargar el blog');
+    }
+});
+
+// Ruta de Contacto
+router.get('/contacto', async (req, res) => {
+    try {
+        const mensajes = await MensajeContacto.findAll({
+            include: [{ model: Usuario, as: 'usuario', attributes: ['nombreUsuario'] }],
+            order: [['createdAt', 'DESC']]
+        });
+        res.render('contacto', { mensajes });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al cargar la página de contacto');
+    }
+});
+
+// Ruta de Admin
+router.get('/admin', (req, res) => {
+    res.render('admin');
 });
 
 // Ruta de Login

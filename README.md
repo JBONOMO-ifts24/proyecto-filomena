@@ -11,6 +11,7 @@ Página web y API para emprendimiento dedicado al arte, diseño y encuadernació
   - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos.
   - **Eventos:** Gestión y visualización de ferias y talleres (con integración a Google Maps).
   - **Blog/Posteos:** Sistema de publicaciones del administrador con capacidad de comentarios para usuarios.
+  - **Muro de Mensajes:** Página de contacto con muro público donde cualquier usuario (invitado o registrado) puede participar.
   - **Imágenes:** Carga y gestión de archivos multimedia mediante Multer.
 
 ## 🛠️ Tecnologías

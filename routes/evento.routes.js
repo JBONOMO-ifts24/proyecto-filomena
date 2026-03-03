@@ -5,7 +5,7 @@ const {
     modificarEvento,
     eliminarEvento
 } = require('../controllers/eventoController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 const router = express.Router();

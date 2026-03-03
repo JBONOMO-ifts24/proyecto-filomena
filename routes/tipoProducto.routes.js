@@ -1,6 +1,6 @@
 const express = require('express');
 const { crearTipoProducto, eliminarTipoProducto, listarTipoProductos, modificarTipoProducto } = require('../controllers/tipoProductoController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 const router = express.Router();

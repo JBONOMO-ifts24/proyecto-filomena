@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function (req, res, next) {
+exports.auth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
@@ -11,6 +11,20 @@ module.exports = function (req, res, next) {
       return res.status(403).json({ error: 'Token inválido o expirado' });
     }
     req.user = user;
+    next();
+  });
+};
+
+exports.authOptional = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+    return next();
+  }
+  jwt.verify(token, process.env.JWT_SECRET || 'secreto', (err, user) => {
+    if (!err) {
+      req.user = user;
+    }
     next();
   });
 };

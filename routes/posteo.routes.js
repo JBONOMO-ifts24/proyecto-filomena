@@ -9,7 +9,7 @@ const {
     agregarComentario,
     eliminarComentario
 } = require('../controllers/posteoController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 const router = express.Router();

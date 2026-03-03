@@ -1,7 +1,9 @@
 /* ----- variables Base ----- */
 :root {
-  --primary-color: #2b3945; /* Azul noche / Premium */
-  --accent-color: #d4a373; /* Dorado tenue / Artesanal */
+  --primary-color: #2b3945;
+  /* Azul noche / Premium */
+  --accent-color: #bf43d8;
+  /* Dorado tenue / Artesanal */
   --background-bg: #f4f5f7;
   --surface: rgba(255, 255, 255, 0.75);
   --text-main: #202c39;
@@ -165,8 +167,10 @@ body {
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  display: none; /* Oculto por defecto */
+  display: none;
+  /* Oculto por defecto */
 }
+
 .alert.error {
   background: #ffeded;
   color: #d32f2f;
@@ -176,6 +180,13 @@ body {
 
 /* ----- Animations ----- */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
