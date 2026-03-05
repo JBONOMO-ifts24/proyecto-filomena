@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Filomena Arte y Diseño{% endblock %}</title>
+    <!-- Fuentes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    
+    <!-- Barra de Navegación -->
+    <nav class="navbar" id="main-nav">
+        <div class="nav-brand">
+            <a href="/">Filomena Arte y Diseño</a>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="/">Inicio</a>
+            <a href="/catalogo">Catálogo</a>
+            <a href="/eventos">Eventos</a>
+            <a href="/blog">Blog</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/admin" id="nav-admin-link" style="display: none;">Admin</a>
+            <!-- Los siguientes botones se inyectarán/modificarán desde auth.js -->
+            <a href="/login" id="nav-login-btn">Login</a>
+            <a href="#" id="nav-logout-btn" style="display: none;">Desloguearse</a>
+        </div>
+    </nav>
+
+    <!-- Contenido dinámico -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Script de Autenticación FrontEnd -->
+    <script src="/js/auth.js"></script>
+</body>
+</html>

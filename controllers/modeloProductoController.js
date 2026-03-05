@@ -3,7 +3,8 @@ const TipoProducto = require('../models/Tipo_Producto');
 
 exports.crearModeloProducto = async (req, res) => {
   try {
-    const { codigo, nombre, descripcion, tipoProductoId } = req.body;
+    const { nombre, descripcion, tipoProductoId } = req.body;
+    const codigo = req.body.codigo || `MOD-${Date.now()}`;
     // Verificar que el tipo de producto exista
     const tipo = await TipoProducto.findByPk(tipoProductoId);
     if (!tipo) {

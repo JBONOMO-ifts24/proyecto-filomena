@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const { subirImagen, listarImagenesPorProducto, eliminarImagen } = require('../controllers/imagenController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 

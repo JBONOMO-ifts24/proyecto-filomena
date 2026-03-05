@@ -11,7 +11,11 @@ const Imagen = sequelize.define('Imagen', {
     type: DataTypes.TEXT,
     allowNull: true
   }
+}, {
+  timestamps: true,
+  paranoid: true
 });
+
 
 // Relación: Una imagen pertenece a un producto
 Imagen.belongsTo(Producto, {

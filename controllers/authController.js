@@ -10,17 +10,20 @@ exports.login = async (req, res) => {
     if (!usuario) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
+    if (usuario.suspendido) {
+      return res.status(403).json({ error: 'Tu cuenta ha sido suspendida. Contacta al administrador.' });
+    }
     const passwordValida = await bcrypt.compare(password, usuario.password);
     if (!passwordValida) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
     // Generar token JWT
     const token = jwt.sign(
-      { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email },
+      { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol },
       process.env.JWT_SECRET || 'secreto',
       { expiresIn: '1h' }
     );
-    res.json({ mensaje: 'Login exitoso', token, usuario: { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email } });
+    res.json({ mensaje: 'Login exitoso', token, usuario: { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -5,6 +5,10 @@ require('./models/Tipo_Producto');
 require('./models/ModeloProducto');
 require('./models/Producto');
 require('./models/Imagen');
+require('./models/Evento');
+require('./models/Posteo');
+require('./models/Comentario');
+require('./models/MensajeContacto');
 
 sequelize.sync({ force: true }).then(() => {
   console.log('¡Tablas recreadas!');

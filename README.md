@@ -1,59 +1,102 @@
 
-# proyecto-filomena
-Página para comercio dedicado a la encuadernación.
+# Filomena Arte y Diseño
+Página web y API para emprendimiento dedicado al arte, diseño y encuadernación artesanal.
 
-## Backend Node.js
+## 🚀 Características
+- **Backend Robusto:** Desarrollado con Node.js, Express y Sequelize (MySQL).
+- **Consumo de API Seguro:** Autenticación basada en JSON Web Tokens (JWT) con roles diferenciados (`usuario` y `admin`).
+- **Frontend Dinámico:** Renderizado del lado del servidor utilizando el motor de plantillas **Nunjucks**.
+- **Diseño Premium:** Interfaz de usuario con estética *Glassmorphism*, moderna y responsive.
+- **Dashboard Administrativo:** Panel de control integral para la gestión de Productos, Modelos, Tipos, Eventos, Posteos y Usuarios (CRUD completo).
+- **Inicio de Sesión con Google:** Integración con Google OAuth 2.0 mediante Passport.js.
+- **Borrado Lógico (Soft Deletes):** Implementación de borrado seguro (`paranoid` models) para evitar la pérdida permanente de datos en todas las entidades clave.
+- **Gestión de Usuarios:** Posibilidad de suspender/activar usuarios, asignar roles de administrador y restricción de login para cuentas suspendidas.
+- **Gestión de Contenidos:**
+  - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos.
+  - **Eventos:** Gestión y visualización de ferias y talleres (con integración a Google Maps).
+  - **Blog/Posteos:** Sistema de publicaciones del administrador con capacidad de comentarios. Los usuarios pueden **editar y borrar** sus propios comentarios.
+  - **Muro de Mensajes:** Página de contacto con muro público donde cualquier usuario (invitado o registrado) puede participar.
 
-Este proyecto incluye un backend desarrollado con Node.js, Express y Sequelize, usando MySQL como base de datos y autenticación JWT.
+  - **Imágenes:** Carga y gestión de archivos multimedia mediante Multer.
 
-### Funcionalidades principales
-- API REST para gestión de usuarios (registro y login seguro con contraseña hasheada).
-- Autenticación con JWT para proteger rutas.
-- Modelos y conexión a base de datos organizados en carpetas (`models`, `db`, `controllers`, `routes`, `middleware`).
+## 🛠️ Tecnologías
+- **Core:** Node.js, Express
+- **Base de Datos:** MySQL via Sequelize ORM
+- **Vistas:** Nunjucks (con filtros personalizados como `dayjs` para fechas)
+- **Seguridad:** Bcryptjs (hashing de contraseñas), JWT (sesiones)
+- **Autenticación Social:** Passport.js (Google Strategy)
+- **Estilo:** CSS Vanilla (Custom Properties, Glassmorphism, Micro-animaciones)
 
-### Estructura de carpetas
-- `models/` — Modelos Sequelize (ej: Usuario)
-- `db/` — Conexión a la base de datos (usando variables de entorno)
-- `controllers/` — Lógica de negocio y controladores
-- `routes/` — Definición de rutas Express
-- `middleware/` — Middlewares personalizados (ej: autenticación JWT)
+## 📁 Estructura de Carpetas
+- `models/` — Definición de entidades (Usuario, Producto, Posteo, Evento, etc.)
+- `controllers/` — Lógica de negocio (auth, productos, posteos, eventos)
+- `routes/` — Rutas para la API (`/api/*`) y para las vistas del Frontend (`/`)
+- `views/` — Plantillas Nunjucks (`.njk`) y Layout principal
+- `public/` — Archivos estáticos: CSS, JS cliente (auth logic) e Imágenes del front
+- `uploads/` — Almacenamiento de imágenes subidas por Multer
+- `db/` — Configuración de conexión Sequelize
+- `config/` — Configuración de estrategias de autenticación (Passport.js).
 
-### Instalación y configuración
-1. Clona el repositorio y entra a la carpeta del proyecto.
+## ⚙️ Instalación y Configuración
+1. Clona el repositorio.
 2. Instala las dependencias:
-	```
-	npm install
-	```
-3. Crea un archivo `.env` con los siguientes datos (ajusta según tu entorno):
-	```
-	DB_NAME=nombre_base
-	DB_USER=usuario
-	DB_PASS=contraseña
-	DB_HOST=localhost
-	DB_DIALECT=mysql
-	JWT_SECRET=tu_clave_secreta_super_segura
-	```
-4. Sincroniza la base de datos (¡esto borra los datos existentes!):
-	```
-	node sync.js
-	```
-	Luego elimina el archivo `sync.js`.
-5. Inicia el servidor:
-	```
-	npm run dev
-	```
+   ```bash
+   npm install
+   ```
+3. Configura el archivo `.env`:
+   ```env
+   # Base de Datos
+   DB_NAME=proyecto_filomena
+   DB_USER=usuario
+   DB_PASS=contraseña
+   DB_HOST=localhost
+   DB_DIALECT=mysql
 
-### Endpoints principales
-- `POST /api/usuarios` — Crear usuario (campos: nombre, apellido, nombreUsuario, email, password)
-- `POST /api/login` — Login (campos: nombreUsuario, password). Devuelve un token JWT.
-- `GET /api/usuarios` — Listar usuarios (requiere token JWT en header Authorization)
+   # Seguridad
+   JWT_SECRET=tu_clave_secreta
 
-### Seguridad
-- Las contraseñas se almacenan hasheadas con bcryptjs.
-- El acceso a rutas protegidas requiere un token JWT válido.
-- Los datos sensibles y claves están en `.env` (excluido de git por `.gitignore`).
+   # Google OAuth (Opcional para desarrollo local)
+   GOOGLE_CLIENT_ID=tu_google_client_id
+   GOOGLE_CLIENT_SECRET=tu_google_client_secret
+   ```
+4. Sincroniza la estructura de la base de datos:
+   ```bash
+   node sync.js
+   ```
+5. Inicia el servidor en modo desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+## 🔐 Guía de Configuración: Google OAuth
+Para habilitar el inicio de sesión con Google, sigue estos pasos:
+
+1. Ingresa a [Google Cloud Console](https://console.cloud.google.com/).
+2. Crea un nuevo proyecto (ej: "Filomena-Web").
+3. Ve a **API y Servicios > Pantalla de consentimiento de OAuth**, configúrala como "Externa" y completa los datos mínimos.
+4. En **API y Servicios > Credenciales**, haz clic en **Crear credenciales > ID de cliente de OAuth**.
+5. Selecciona **Aplicación web**.
+6. En **Orígenes de JavaScript autorizados**, añade: `http://localhost:3000`.
+7. En **URI de redireccionamiento autorizados**, añade: `http://localhost:3000/api/auth/google/callback`.
+8. Copia el **Client ID** y el **Client Secret** y pégalos en tu archivo `.env`.
+
+## 🔐 API & Seguridad
+- **JWT Fix:** Se corrigió un bug crítico donde el token no incluía el rol del usuario, impidiendo la validación de administradores. Ahora el payload contiene `{ id, nombreUsuario, rol }`.
+- **Endpoints Protegidos:** Solo los usuarios con rol `admin` pueden crear eventos, productos o eliminar comentarios.
+- **Rutas Principales:**
+  - `POST /api/login`: Genera el token de acceso.
+  - `GET /catalogo`: Vista pública de productos.
+  - `GET /eventos`: Vista pública de próximos eventos.
+  - `POST /api/posteos/:id/comentarios`: Permite a cualquier usuario registrado comentar.
+
+## 🛡️ Panel de Administración
+Acceso mediante `/admin`. El panel permite:
+- Gestionar stock de productos, modelos y tipos de producto.
+- Programar y describir eventos.
+- Moderar cualquier comentario en el blog.
+- Administrar estados de cuenta de usuarios (activar/suspender/promocionar).
+- Carga de imágenes con previsualización para productos y posteos.
+
 
 ---
-
-La página va a tener la información del stock de los productos realizados en el emprendimiento. El stock va a poder tener una integración para poder modificar el stock desde planillas tipo excel.
-Además del stock, la webpage va a tener un apartado donde se van a mostrar conocimientos y técnicas referidas a los productos realizados en el emprendimiento.
+*Filomena Arte y Diseño - Pasión por la encuadernación artesanal.*
