@@ -21,7 +21,11 @@ const Producto = sequelize.define('Producto', {
     allowNull: false,
     defaultValue: 0
   }
+}, {
+  timestamps: true,
+  paranoid: true
 });
+
 
 // Relación: Un Producto pertenece a un ModeloProducto
 Producto.belongsTo(ModeloProducto, {

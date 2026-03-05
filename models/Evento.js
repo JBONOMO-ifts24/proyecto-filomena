@@ -14,8 +14,16 @@ const Evento = sequelize.define('Evento', {
     lugar: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
+}, {
+    timestamps: true,
+    paranoid: true
 });
+
 
 // Relación: Un Evento es creado por un Usuario (Admin)
 Evento.belongsTo(Usuario, {

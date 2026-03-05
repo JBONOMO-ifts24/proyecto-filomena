@@ -19,7 +19,15 @@
             <input type="password" id="password" name="password" required placeholder="••••••••">
         </div>
 
-        <button type="submit" class="btn-primary">Ingresar</button>
+        <button type="submit" class="btn-primary" style="width: 100%;">Ingresar</button>
     </form>
+
+    <div style="margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 2rem; text-align: center;">
+        <p style="color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.9rem;">O ingresa con tus redes</p>
+        <a href="/api/auth/google" style="display: flex; align-items: center; justify-content: center; gap: 0.8rem; background: #fff; color: #444; border: 1px solid #ddd; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: var(--shadow-sm);" onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='#fff'">
+            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" style="width: 20px;">
+            Continuar con Google
+        </a>
+    </div>
 </div>
 {% endblock %}

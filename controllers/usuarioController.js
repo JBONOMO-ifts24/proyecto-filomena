@@ -6,8 +6,7 @@ exports.crearUsuario = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
     // Forzar rol 'usuario' para registros públicos
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: 'usuario' });
+    const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: 'usuario', suspendido: false });
     res.status(201).json(usuario);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -19,8 +18,7 @@ exports.crearUsuario = async (req, res) => {
 exports.crearUsuarioAdmin = async (req, res) => {
   try {
     const { password, rol, ...rest } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: rol || 'usuario' });
+    const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: rol || 'usuario', suspendido: false });
     res.status(201).json(usuario);
   } catch (err) {
     res.status(400).json({ error: err.message });

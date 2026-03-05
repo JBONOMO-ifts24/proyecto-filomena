@@ -15,6 +15,10 @@ const TipoProducto = sequelize.define('TipoProducto', {
     type: DataTypes.TEXT,
     allowNull: true
   }
+}, {
+  timestamps: true,
+  paranoid: true
 });
+
 
 module.exports = TipoProducto;

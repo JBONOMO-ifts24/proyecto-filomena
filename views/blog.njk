@@ -34,11 +34,24 @@
                     <div id="comments-list-{{ posteo.id }}">
                         {% for comentario in posteo.comentarios %}
                             <div style="background: rgba(255,255,255,0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
-                                    @{{ comentario.autor.nombreUsuario }}
-                                    <span style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">{{ comentario.createdAt | date('DD/MM/YYYY HH:mm') }}</span>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
+                                        @{{ comentario.autor.nombreUsuario }}
+                                        <span style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">{{ comentario.createdAt | date('DD/MM/YYYY HH:mm') }}</span>
+                                    </div>
+                                    <div class="comment-actions" style="display: none;" data-comentario-id="{{ comentario.id }}" data-autor-id="{{ comentario.autor.id }}">
+                                        <button class="btn-comment-edit" style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Editar</button>
+                                        <button class="btn-comment-delete" style="background: none; border: none; color: #ff4444; font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Borrar</button>
+                                    </div>
                                 </div>
-                                <p style="margin: 0; color: var(--text-main); font-size: 1rem;">{{ comentario.texto }}</p>
+                                <p class="comment-text" style="margin: 0; color: var(--text-main); font-size: 1rem;">{{ comentario.texto }}</p>
+                                <div class="edit-comment-form" style="display: none; margin-top: 0.5rem;">
+                                    <textarea style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--surface); color: var(--text-main); font-family: inherit; margin-bottom: 0.5rem; min-height: 60px;">{{ comentario.texto }}</textarea>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <button class="btn-comment-save" style="background: var(--primary-color); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Guardar</button>
+                                        <button class="btn-comment-cancel" style="background: var(--text-light); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Cancelar</button>
+                                    </div>
+                                </div>
                             </div>
                         {% endfor %}
                     </div>

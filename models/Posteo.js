@@ -15,7 +15,11 @@ const Posteo = sequelize.define('Posteo', {
         type: DataTypes.STRING,
         allowNull: true // Puede haber posteos sin imagen
     }
+}, {
+    timestamps: true,
+    paranoid: true
 });
+
 
 // Relación: Un Posteo es creado por un Usuario (Admin)
 Posteo.belongsTo(Usuario, {

@@ -112,9 +112,36 @@ exports.eliminarComentario = async (req, res) => {
             return res.status(404).json({ error: 'Comentario no encontrado' });
         }
 
+        // Verificar autoría o ser admin
+        if (comentario.usuarioId !== req.user.id && req.user.rol !== 'admin') {
+            return res.status(403).json({ error: 'No tienes permiso para eliminar este comentario' });
+        }
+
         await comentario.destroy();
         res.json({ mensaje: 'Comentario eliminado correctamente' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+};
+
+exports.modificarComentario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { texto } = req.body;
+        const comentario = await Comentario.findByPk(id);
+
+        if (!comentario) {
+            return res.status(404).json({ error: 'Comentario no encontrado' });
+        }
+
+        // Verificar autoría o ser admin
+        if (comentario.usuarioId !== req.user.id && req.user.rol !== 'admin') {
+            return res.status(403).json({ error: 'No tienes permiso para modificar este comentario' });
+        }
+
+        await comentario.update({ texto });
+        res.json(comentario);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
 };

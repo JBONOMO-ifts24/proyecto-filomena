@@ -9,6 +9,8 @@
     <!-- Tabs Navigation -->
     <div style="display: flex; gap: 1rem; border-bottom: 1px solid var(--glass-border); margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
         <button class="tab-btn active" data-tab="productos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Productos</button>
+        <button class="tab-btn" data-tab="modelos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Modelos</button>
+        <button class="tab-btn" data-tab="tipos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Tipos</button>
         <button class="tab-btn" data-tab="eventos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Eventos</button>
         <button class="tab-btn" data-tab="posteos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Posteos</button>
         <button class="tab-btn" data-tab="usuarios" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Usuarios</button>
@@ -31,6 +33,49 @@
                     </tr>
                 </thead>
                 <tbody id="productos-table-body">
+                    <!-- Dynamic Content -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modelos-section" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-color);">Gestión de Modelos de Producto</h2>
+            <button class="btn-primary" onclick="openModal('modeloproducto')">+ Nuevo Modelo</button>
+        </div>
+        <div class="table-container" style="background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: rgba(0,0,0,0.05);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left;">Código</th>
+                        <th style="padding: 1rem; text-align: left;">Nombre</th>
+                        <th style="padding: 1rem; text-align: left;">Tipo</th>
+                        <th style="padding: 1rem; text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="modelos-table-body">
+                    <!-- Dynamic Content -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tipos-section" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-color);">Gestión de Tipos de Producto</h2>
+            <button class="btn-primary" onclick="openModal('tipoproducto')">+ Nuevo Tipo</button>
+        </div>
+        <div class="table-container" style="background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: rgba(0,0,0,0.05);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left;">Nombre</th>
+                        <th style="padding: 1rem; text-align: left;">Descripción</th>
+                        <th style="padding: 1rem; text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tipos-table-body">
                     <!-- Dynamic Content -->
                 </tbody>
             </table>
@@ -83,7 +128,7 @@
     <div id="usuarios-section" class="tab-content" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h2 style="color: var(--accent-color);">Gestión de Usuarios</h2>
-            <button class="btn-primary" onclick="openModal('usuario')">+ Nuevo Usuario Admin</button>
+            <button class="btn-primary" onclick="openModal('usuario')">+ Nuevo Usuario </button>
         </div>
         <div class="table-container" style="background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
             <table style="width: 100%; border-collapse: collapse;">
@@ -136,5 +181,20 @@
     .btn-action { padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; border: none; transition: 0.3s; }
     .btn-edit { background: #e3f2fd; color: #1976d2; margin-right: 0.5rem; }
     .btn-delete { background: #ffebee; color: #d32f2f; }
+    .admin-input {
+        width: 100%;
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.7);
+        font-family: inherit;
+        font-size: 0.95rem;
+    }
+    .admin-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(191, 67, 216, 0.1);
+    }
 </style>
 {% endblock %}

@@ -24,7 +24,12 @@ const Usuario = sequelize.define('Usuario', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true // Permitir nulo para usuarios de Google
+  },
+  googleId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true
   },
   rol: {
     type: DataTypes.ENUM('usuario', 'admin'),
@@ -36,6 +41,10 @@ const Usuario = sequelize.define('Usuario', {
     allowNull: false,
     defaultValue: false
   }
+}, {
+  timestamps: true,
+  paranoid: true
 });
+
 
 module.exports = Usuario;

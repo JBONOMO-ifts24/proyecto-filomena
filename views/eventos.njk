@@ -38,6 +38,12 @@
                         </div>
                     </div>
 
+                    {% if evento.descripcion %}
+                    <p style="margin-top: 1.5rem; color: var(--text-main); line-height: 1.5; font-style: italic; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--accent-color);">
+                        {{ evento.descripcion }}
+                    </p>
+                    {% endif %}
+
                     <div style="margin-top: 2rem;">
                         <a href="https://www.google.com/maps/search/?api=1&query={{ evento.lugar | urlencode }}" target="_blank" class="btn-primary" style="display: inline-block; text-align: center; text-decoration: none; padding: 0.8rem 1.5rem;">Ver en Google Maps</a>
                     </div>

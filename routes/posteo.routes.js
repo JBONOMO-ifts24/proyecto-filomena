@@ -7,7 +7,8 @@ const {
     eliminarPosteo,
     listarPosteos,
     agregarComentario,
-    eliminarComentario
+    eliminarComentario,
+    modificarComentario
 } = require('../controllers/posteoController');
 const { auth } = require('../middleware/auth');
 const admin = require('../middleware/admin');
@@ -36,6 +37,7 @@ router.get('/posteos', listarPosteos);
 
 // Rutas de Comentarios (cualquier usuario registrado puede comentar)
 router.post('/posteos/:id/comentarios', auth, agregarComentario);
-router.delete('/comentarios/:id', auth, admin, eliminarComentario);
+router.put('/comentarios/:id', auth, modificarComentario);
+router.delete('/comentarios/:id', auth, eliminarComentario);
 
 module.exports = router;

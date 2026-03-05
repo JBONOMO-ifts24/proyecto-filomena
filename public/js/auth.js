@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Limpiar formulario y recargar para ver el comentario (o inyectar dinámicamente)
                     textarea.value = '';
                     location.reload();
                 } else {
@@ -80,6 +79,86 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- NUEVA LÓGICA: Editar y Borrar Comentarios ---
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const userId = payload.id;
+            const userRole = payload.rol;
+
+            // Mostrar acciones de comentario (Editar/Borrar) solo si es el autor o admin
+            document.querySelectorAll('.comment-actions').forEach(actions => {
+                const autorId = parseInt(actions.getAttribute('data-autor-id'));
+                if (userId === autorId || userRole === 'admin') {
+                    actions.style.display = 'block';
+                }
+            });
+
+            // Acción: Borrar Comentario
+            document.querySelectorAll('.btn-comment-delete').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('¿Estás seguro de que quieres eliminar este comentario?')) return;
+                    const commentId = btn.closest('.comment-actions').getAttribute('data-comentario-id');
+                    try {
+                        const response = await fetch(`/api/comentarios/${commentId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) location.reload();
+                        else alert('Error al borrar comentario');
+                    } catch (err) { console.error(err); }
+                });
+            });
+
+            // Acción: Mostrar Formulario de Edición
+            document.querySelectorAll('.btn-comment-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const commentContainer = btn.closest('.comment-actions').parentElement.parentElement;
+                    const textP = commentContainer.querySelector('.comment-text');
+                    const editForm = commentContainer.querySelector('.edit-comment-form');
+                    textP.style.display = 'none';
+                    editForm.style.display = 'block';
+                });
+            });
+
+            // Acción: Cancelar Edición
+            document.querySelectorAll('.btn-comment-cancel').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const commentContainer = btn.closest('.edit-comment-form').parentElement;
+                    const textP = commentContainer.querySelector('.comment-text');
+                    const editForm = commentContainer.querySelector('.edit-comment-form');
+                    textP.style.display = 'block';
+                    editForm.style.display = 'none';
+                });
+            });
+
+            // Acción: Guardar Edición
+            document.querySelectorAll('.btn-comment-save').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const commentContainer = btn.closest('.edit-comment-form').parentElement;
+                    const commentId = commentContainer.querySelector('.comment-actions').getAttribute('data-comentario-id');
+                    const nuevoTexto = commentContainer.querySelector('textarea').value;
+
+                    if (!nuevoTexto.trim()) return;
+
+                    try {
+                        const response = await fetch(`/api/comentarios/${commentId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ texto: nuevoTexto })
+                        });
+                        if (response.ok) location.reload();
+                        else alert('Error al actualizar comentario');
+                    } catch (err) { console.error(err); }
+                });
+            });
+
+        } catch (e) { console.error("Error al procesar permisos de comentarios", e); }
+    }
 
     // Lógica para el Muro de Contacto
     const contactForm = document.getElementById('contact-wall-form');

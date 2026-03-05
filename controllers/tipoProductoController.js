@@ -2,7 +2,9 @@ const TipoProducto = require('../models/Tipo_Producto');
 
 exports.crearTipoProducto = async (req, res) => {
   try {
-    const tipo = await TipoProducto.create(req.body);
+    const { nombre, descripcion } = req.body;
+    const codigo = req.body.codigo || `TIPO-${Date.now()}`;
+    const tipo = await TipoProducto.create({ nombre, descripcion, codigo });
     res.status(201).json(tipo);
   } catch (err) {
     res.status(400).json({ error: err.message });

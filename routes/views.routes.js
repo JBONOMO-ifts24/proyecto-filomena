@@ -64,7 +64,7 @@ router.get('/blog', async (req, res) => {
                 {
                     model: Comentario,
                     as: 'comentarios',
-                    include: [{ model: Usuario, as: 'autor', attributes: ['nombreUsuario'] }]
+                    include: [{ model: Usuario, as: 'autor', attributes: ['nombreUsuario', 'id'] }]
                 }
             ],
             order: [['createdAt', 'DESC']]

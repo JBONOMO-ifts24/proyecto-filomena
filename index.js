@@ -3,6 +3,7 @@ const nunjucks = require('nunjucks');
 const path = require('path');
 const dayjs = require('dayjs');
 const sequelize = require('./db/sequelize');
+const passport = require('./config/passport');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware para parsear JSON y urlencoded (formularios HTML)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuarios.routes');

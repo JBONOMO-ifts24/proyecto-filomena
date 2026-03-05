@@ -10,6 +10,9 @@ exports.login = async (req, res) => {
     if (!usuario) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
+    if (usuario.suspendido) {
+      return res.status(403).json({ error: 'Tu cuenta ha sido suspendida. Contacta al administrador.' });
+    }
     const passwordValida = await bcrypt.compare(password, usuario.password);
     if (!passwordValida) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
