@@ -41,3 +41,24 @@ exports.listarMensajes = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+exports.eliminarMensaje = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mensaje = await MensajeContacto.findByPk(id);
+
+        if (!mensaje) {
+            return res.status(404).json({ error: 'Mensaje no encontrado' });
+        }
+
+        // Autorización: creador del mensaje o admin
+        if (req.user.rol !== 'admin' && mensaje.usuarioId !== req.user.id) {
+            return res.status(403).json({ error: 'No tienes permiso para eliminar este mensaje' });
+        }
+
+        await mensaje.destroy();
+        res.json({ mensaje: 'Mensaje eliminado correctamente' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

@@ -20,6 +20,10 @@ const Producto = sequelize.define('Producto', {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
+  },
+  precio: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true
   }
 }, {
   timestamps: true,

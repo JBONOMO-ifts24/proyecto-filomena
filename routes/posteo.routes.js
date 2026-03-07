@@ -1,5 +1,5 @@
 const express = require('express');
-const multer = require('multer');
+
 const path = require('path');
 const {
     crearPosteo,
@@ -15,17 +15,8 @@ const admin = require('../middleware/admin');
 
 const router = express.Router();
 
-// Configuración de multer (similar a lo que hay en imagen.routes.js)
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../uploads'));
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage });
+const upload = require('../middleware/upload');
+
 
 // Rutas protegidas (solo admin)
 router.post('/posteos', auth, admin, upload.single('imagen'), crearPosteo);

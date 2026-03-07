@@ -18,6 +18,10 @@ const Evento = sequelize.define('Evento', {
     descripcion: {
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    googleMapsUrl: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     timestamps: true,
