@@ -3,12 +3,13 @@ const Evento = require('../models/Evento');
 // Crear evento (solo admin)
 exports.crearEvento = async (req, res) => {
     try {
-        const { tipo, fecha_hora, lugar, descripcion } = req.body;
+        const { tipo, fecha_hora, lugar, descripcion, googleMapsUrl } = req.body;
         const evento = await Evento.create({
             tipo,
             fecha_hora,
             lugar,
             descripcion,
+            googleMapsUrl,
             usuarioId: req.user.id // Extraído del token via middleware auth
         });
         res.status(201).json(evento);
@@ -33,14 +34,14 @@ exports.listarEventos = async (req, res) => {
 exports.modificarEvento = async (req, res) => {
     try {
         const { id } = req.params;
-        const { tipo, fecha_hora, lugar, descripcion } = req.body;
+        const { tipo, fecha_hora, lugar, descripcion, googleMapsUrl } = req.body;
 
         const evento = await Evento.findByPk(id);
         if (!evento) {
             return res.status(404).json({ error: 'Evento no encontrado' });
         }
 
-        await evento.update({ tipo, fecha_hora, lugar, descripcion });
+        await evento.update({ tipo, fecha_hora, lugar, descripcion, googleMapsUrl });
         res.json(evento);
     } catch (err) {
         res.status(400).json({ error: err.message });

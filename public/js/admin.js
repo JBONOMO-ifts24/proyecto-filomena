@@ -58,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.suspendido = formData.has('suspendido');
             }
 
+            if (data.precio === '') {
+                data.precio = null;
+            }
+
             let url = `/api/${entity}s`;
 
             let method = mode === 'edit' ? 'PUT' : 'POST';
@@ -142,9 +146,11 @@ function renderTable(entity, data) {
     data.forEach(item => {
         let row = '<tr>';
         if (entity === 'productos') {
+            const precioStr = item.precio ? `$${item.precio}` : '-';
             row += `<td style="padding: 1rem;">${item.codigo}</td>
                     <td style="padding: 1rem;">${item.nombre}</td>
-                    <td style="padding: 1rem;">${item.cantidad}</td>`;
+                    <td style="padding: 1rem;">${item.cantidad}</td>
+                    <td style="padding: 1rem;">${precioStr}</td>`;
         } else if (entity === 'modelos') {
             const tipoNombre = item.tipo_producto ? item.tipo_producto.nombre : '-';
             row += `<td style="padding: 1rem;">${item.codigo}</td>
@@ -258,6 +264,7 @@ function openModal(entity, item = null) {
             <input type="text" name="tipo" placeholder="Tipo de Evento" required class="admin-input" value="${item ? item.tipo : ''}">
             <input type="datetime-local" name="fecha_hora" required class="admin-input" value="${fecha}">
             <input type="text" name="lugar" placeholder="Lugar" required class="admin-input" value="${item ? item.lugar : ''}">
+            <input type="text" name="googleMapsUrl" placeholder="Enlace / Coordenadas Google Maps (Opcional)" class="admin-input" value="${item ? item.googleMapsUrl || '' : ''}">
             <textarea name="descripcion" placeholder="Descripción del evento" class="admin-input" style="min-height: 100px;">${item ? item.descripcion : ''}</textarea>
        `;
     } else if (entity === 'posteo') {
@@ -273,6 +280,7 @@ function openModal(entity, item = null) {
             <input type="text" name="nombre" placeholder="Nombre" required class="admin-input" value="${item ? item.nombre : ''}">
             <textarea name="descripcion" placeholder="Descripción" class="admin-input">${item ? item.descripcion || '' : ''}</textarea>
             <input type="number" name="cantidad" placeholder="Cantidad" required class="admin-input" value="${item ? item.cantidad : ''}">
+            <input type="number" name="precio" placeholder="Precio (Opcional)" step="0.01" class="admin-input" value="${item ? item.precio || '' : ''}">
             <select name="modeloProductoId" required class="admin-input" id="select-modelo">
                 <option value="">Cargando modelos...</option>
             </select>

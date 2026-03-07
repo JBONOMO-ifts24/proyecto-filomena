@@ -157,7 +157,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-        } catch (e) { console.error("Error al procesar permisos de comentarios", e); }
+            // --- NUEVA LÓGICA: Borrar Mensajes del Muro ---
+            document.querySelectorAll('.message-actions').forEach(actions => {
+                const msgUserId = actions.getAttribute('data-usuario-id');
+                if ((msgUserId && parseInt(msgUserId) === userId) || userRole === 'admin') {
+                    actions.style.display = 'block';
+                }
+            });
+
+            document.querySelectorAll('.btn-message-delete').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('¿Estás seguro de que quieres eliminar este mensaje del muro?')) return;
+                    const messageId = btn.closest('.message-actions').getAttribute('data-mensaje-id');
+                    try {
+                        const response = await fetch(`/api/mensajes-contacto/${messageId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) location.reload();
+                        else alert('Error al borrar mensaje');
+                    } catch (err) { console.error(err); }
+                });
+            });
+
+        } catch (e) { console.error("Error al procesar permisos de comentarios/muro", e); }
     }
 
     // Lógica para el Muro de Contacto

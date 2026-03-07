@@ -5,14 +5,14 @@ const Imagen = require('../models/Imagen');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, cantidad, modeloProductoId } = req.body;
+    const { nombre, descripcion, cantidad, modeloProductoId, precio } = req.body;
     const codigo = req.body.codigo || `PROD-${Date.now()}`;
     // Verificar que el modelo exista
     const modelo = await ModeloProducto.findByPk(modeloProductoId);
     if (!modelo) {
       return res.status(400).json({ error: 'Modelo de producto no válido' });
     }
-    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId });
+    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId, precio });
 
     // Si hay una imagen, crearla y asociarla
     if (req.file) {

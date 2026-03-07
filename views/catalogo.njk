@@ -42,7 +42,14 @@
                                             
                                             <!-- Info del Producto -->
                                             <div style="padding: 1.5rem;">
-                                                <h4 style="color: var(--primary-color); font-size: 1.2rem; margin-bottom: 0.5rem;">{{ producto.nombre }}</h4>
+                                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                                    <h4 style="color: var(--primary-color); font-size: 1.2rem; margin: 0;">{{ producto.nombre }}</h4>
+                                                    {% if producto.precio %}
+                                                        <span style="background: var(--accent-light); color: var(--accent-color); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.9rem;">
+                                                            ${{ producto.precio }}
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
                                                 <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem; min-height: 40px;">{{ producto.descripcion }}</p>
                                                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 600;">
                                                     <span style="color: var(--accent-color);">Código: {{ producto.codigo }}</span>
