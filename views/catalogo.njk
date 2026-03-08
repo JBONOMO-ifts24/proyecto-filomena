@@ -30,39 +30,34 @@
                             {% else %}
                                 <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
                                     {% for producto in modelo.productos %}
-                                        <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 280px; overflow: hidden; transition: transform 0.3s ease;">
-                                            <!-- Galeria de Imagenes del Producto -->
-                                            <div style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                                                {% if producto.imagenes.length > 0 %}
-                                                    <img src="{{ producto.imagenes[0].url }}" alt="{{ producto.imagenes[0].descripcion }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                {% else %}
-                                                    <span style="color: #999;">Sin imagen</span>
-                                                {% endif %}
-                                            </div>
-                                            
-                                            <!-- Info del Producto -->
-                                            <div style="padding: 1.5rem;">
-                                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                                    <h4 style="color: var(--primary-color); font-size: 1.2rem; margin: 0;">{{ producto.nombre }}</h4>
-                                                    {% if producto.precio %}
-                                                        <span style="background: var(--accent-light); color: var(--accent-color); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.9rem;">
-                                                            ${{ producto.precio }}
-                                                        </span>
+                                        <a href="/producto/{{ producto.id }}" style="text-decoration: none; color: inherit;">
+                                            <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 220px; overflow: hidden; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                                <!-- Imagen Principal del Producto -->
+                                                <div style="height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                                    {% set imagenPrincipal = null %}
+                                                    {% for img in producto.imagenes %}
+                                                        {% if img.es_principal %}
+                                                            {% set imagenPrincipal = img %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    
+                                                    {% if not imagenPrincipal and producto.imagenes.length > 0 %}
+                                                        {% set imagenPrincipal = producto.imagenes[0] %}
+                                                    {% endif %}
+
+                                                    {% if imagenPrincipal %}
+                                                        <img src="{{ imagenPrincipal.url }}" alt="{{ producto.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        <span style="color: #999;">Sin imagen</span>
                                                     {% endif %}
                                                 </div>
-                                                <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem; min-height: 40px;">{{ producto.descripcion }}</p>
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 600;">
-                                                    <span style="color: var(--accent-color);">Código: {{ producto.codigo }}</span>
-                                                    <span style="color: {{ 'green' if producto.cantidad > 0 else 'red' }};">
-                                                        {% if producto.cantidad > 0 %}
-                                                            Stock: {{ producto.cantidad }}
-                                                        {% else %}
-                                                            Agotado
-                                                        {% endif %}
-                                                    </span>
+                                                
+                                                <!-- Nombre del Producto -->
+                                                <div style="padding: 1rem; text-align: center;">
+                                                    <h4 style="color: var(--primary-color); font-size: 1.1rem; margin: 0; font-weight: 600;">{{ producto.nombre }}</h4>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     {% endfor %}
                                 </div>
                             {% endif %}

@@ -10,6 +10,10 @@ const Imagen = sequelize.define('Imagen', {
   descripcion: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  es_principal: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   timestamps: true,

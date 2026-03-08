@@ -50,3 +50,27 @@ exports.eliminarImagen = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.setearImagenPrincipal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const imagen = await Imagen.findByPk(id);
+    if (!imagen) {
+      return res.status(404).json({ error: 'Imagen no encontrada' });
+    }
+
+    // Poner todas las otras imágenes del producto como NO principales
+    await Imagen.update(
+      { es_principal: false },
+      { where: { productoId: imagen.productoId } }
+    );
+
+    // Poner esta como principal
+    imagen.es_principal = true;
+    await imagen.save();
+
+    res.json(imagen);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
