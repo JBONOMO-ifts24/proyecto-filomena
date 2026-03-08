@@ -41,6 +41,35 @@ router.get('/catalogo', async (req, res) => {
     }
 });
 
+// Ruta detalle del producto
+router.get('/producto/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const producto = await Producto.findByPk(id, {
+            include: [
+                {
+                    model: Imagen,
+                    as: 'imagenes'
+                },
+                {
+                    model: ModeloProducto,
+                    as: 'modelo',
+                    include: [{ model: TipoProducto, as: 'tipo_producto' }]
+                }
+            ]
+        });
+
+        if (!producto) {
+            return res.status(404).send('Producto no encontrado');
+        }
+
+        res.render('producto_detalle', { producto });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al cargar el detalle del producto');
+    }
+});
+
 // Ruta de Eventos
 router.get('/eventos', async (req, res) => {
     try {

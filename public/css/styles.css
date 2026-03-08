@@ -35,7 +35,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: 0.8rem 5%;
+  /* Reducido un poco para compensar el logo */
   background: var(--surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -44,6 +45,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  height: 70px;
+  /* Altura fija para consistencia */
 }
 
 .nav-brand a {
@@ -52,6 +55,12 @@ body {
   color: var(--primary-color);
   text-decoration: none;
   letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
 }
 
 .nav-links a {
@@ -81,6 +90,102 @@ body {
 
 .nav-links a:hover::after {
   width: 100%;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  margin-left: 2rem;
+}
+
+#navbar-logo {
+  height: 50px;
+  /* Ajuste para que quepa en la barra de 70px */
+  width: auto;
+  display: block;
+}
+
+/* Hamburguesa */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.menu-toggle .bar {
+  height: 3px;
+  width: 100%;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Navbar */
+@media (max-width: 992px) {
+  .nav-brand a {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 70px;
+    right: -100%;
+    width: 250px;
+    height: calc(100vh - 70px);
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+    transition: 0.4s ease;
+    box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.1);
+    border-left: 1px solid var(--glass-border);
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a {
+    margin: 1.5rem 0;
+    margin-left: 0;
+    font-size: 1.1rem;
+  }
+
+  /* Animación hamburguesa */
+  #menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  #menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+  }
+
+  #menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+  }
+
+  .nav-logo {
+    margin-left: 1rem;
+  }
+
+  #navbar-logo {
+    height: 40px;
+  }
 }
 
 /* ----- Main Container ----- */

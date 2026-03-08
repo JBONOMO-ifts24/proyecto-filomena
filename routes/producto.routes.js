@@ -10,9 +10,9 @@ const router = express.Router();
 const upload = require('../middleware/upload');
 
 
-router.post('/productos', auth, admin, upload.single('imagen'), crearProducto);
+router.post('/productos', auth, admin, upload.array('imagenes', 3), crearProducto);
 router.get('/productos', auth, admin, listarProductos);
 router.delete('/productos/:id', auth, admin, eliminarProducto);
-router.put('/productos/:id', auth, admin, upload.single('imagen'), modificarProducto);
+router.put('/productos/:id', auth, admin, upload.array('imagenes', 3), modificarProducto);
 
 module.exports = router;
