@@ -99,6 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     body
                 });
 
+                if (response.status === 401 || response.status === 403) {
+                    alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+
 
                 if (response.ok) {
                     closeModal();
@@ -132,6 +139,14 @@ async function loadData(entity) {
         const response = await fetch(`/api/${apiPath}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
         const data = await response.json();
         renderTable(entity, data);
     } catch (err) {
@@ -206,6 +221,14 @@ async function deleteItem(entity, id) {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
         if (response.ok) {
             loadData(entity);
         } else {
@@ -223,6 +246,14 @@ async function toggleUserStatus(id) {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
         if (response.ok) {
             loadData('usuarios');
         }
@@ -377,6 +408,14 @@ async function setPrincipalImage(imageId, productoId) {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
         if (response.ok) {
             // Recargar datos para ver el cambio en el modal (o cerrar y recargar tabla)
             // Por simplicidad, recargamos la tabla y cerramos el modal
