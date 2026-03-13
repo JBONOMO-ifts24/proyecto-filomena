@@ -1,5 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
+
+    // --- NUEVO: Verificar expiración tempranamente ---
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.exp && (payload.exp * 1000) < Date.now()) {
+                console.warn('Token expirado. Cerrando sesión local.');
+                localStorage.removeItem('token');
+                token = null;
+                // Si estamos en una ruta de admin, redirigir
+                if (window.location.pathname.startsWith('/admin')) {
+                    window.location.href = '/login';
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error("Error al decodificar token", e);
+            localStorage.removeItem('token');
+            token = null;
+        }
+    }
+
     const loginBtn = document.getElementById('nav-login-btn');
     const logoutBtn = document.getElementById('nav-logout-btn');
 
