@@ -66,11 +66,11 @@ exports.listarPosteos = async (req, res) => {
     try {
         const posteos = await Posteo.findAll({
             include: [
-                { model: Usuario, as: 'autor', attributes: ['nombreUsuario', 'id'] },
+                { model: Usuario, as: 'autor', attributes: ['nombre', 'apellido', 'nombreUsuario', 'id'] },
                 {
                     model: Comentario,
                     as: 'comentarios',
-                    include: [{ model: Usuario, as: 'autor', attributes: ['nombreUsuario', 'id'] }]
+                    include: [{ model: Usuario, as: 'autor', attributes: ['nombre', 'apellido', 'nombreUsuario', 'id'] }]
                 }
             ],
             order: [['createdAt', 'DESC']]

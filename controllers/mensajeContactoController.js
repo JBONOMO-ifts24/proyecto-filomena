@@ -2,6 +2,7 @@ const MensajeContacto = require('../models/MensajeContacto');
 const Usuario = require('../models/Usuario');
 
 exports.crearMensaje = async (req, res) => {
+    console.log(req.body);
     try {
         const { nombre, email, mensaje } = req.body;
         let finalNombre = nombre;
@@ -9,7 +10,7 @@ exports.crearMensaje = async (req, res) => {
         const usuarioId = req.user ? req.user.id : null;
 
         if (req.user) {
-            finalNombre = req.user.nombreUsuario;
+            finalNombre = req.user.nombre;
             finalEmail = req.user.email;
         }
 
@@ -32,7 +33,7 @@ exports.listarMensajes = async (req, res) => {
             include: [{
                 model: Usuario,
                 as: 'usuario',
-                attributes: ['nombreUsuario']
+                attributes: ['nombre', 'apellido', 'nombreUsuario']
             }],
             order: [['createdAt', 'DESC']]
         });

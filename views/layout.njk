@@ -37,7 +37,13 @@
                 <a href="/admin" id="nav-admin-link" style="display: none;">Admin</a>
                 <!-- Los siguientes botones se inyectarán/modificarán desde auth.js -->
                 <a href="/login" id="nav-login-btn">Login</a>
-                <a href="#" id="nav-logout-btn" style="display: none;">Desloguearse</a>
+                <div class="nav-user-menu" id="nav-user-menu" style="display: none;">
+                    <span class="nav-user-name" id="nav-user-name">Usuario</span>
+                    <div class="nav-user-dropdown">
+                        <a href="/perfil">Mi Perfil</a>
+                        <a href="#" id="nav-logout-btn">Desloguearse</a>
+                    </div>
+                </div>
             </div>
         </nav>
         <!-- Contenido dinámico -->

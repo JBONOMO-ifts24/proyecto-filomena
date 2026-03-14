@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const loginBtn = document.getElementById('nav-login-btn');
+    const navUserMenu = document.getElementById('nav-user-menu');
+    const navUserName = document.getElementById('nav-user-name');
     const logoutBtn = document.getElementById('nav-logout-btn');
 
     // Manejo de la Navegación (Mostrar/Ocultar Login vs Logout)
@@ -30,11 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (token) {
         if (loginBtn) loginBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
+        if (navUserMenu) navUserMenu.style.display = 'inline-flex';
 
         // Decodificar rol (JWT es base64 en la segunda parte)
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
+            if (navUserName) navUserName.textContent = payload.nombreUsuario || 'Usuario';
             if (payload.rol === 'admin') {
                 if (adminLink) adminLink.style.display = 'inline-block';
             }
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
         if (loginBtn) loginBtn.style.display = 'inline-block';
-        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (navUserMenu) navUserMenu.style.display = 'none';
         if (adminLink) adminLink.style.display = 'none';
     }
 

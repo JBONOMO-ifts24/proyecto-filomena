@@ -29,6 +29,38 @@ exports.crearUsuarioAdmin = async (req, res) => {
   }
 };
 
+exports.obtenerMiPerfil = async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] }
+    });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(usuario);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.actualizarMiPerfil = async (req, res) => {
+  try {
+    const { password, rol, suspendido, ...rest } = req.body; // Never update rol or suspendido here
+    const usuario = await Usuario.findByPk(req.user.id);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      rest.password = await bcrypt.hash(password, salt);
+    }
+
+    await usuario.update(rest);
+    res.json(usuario);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 exports.obtenerUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
