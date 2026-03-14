@@ -1,0 +1,46 @@
+{% extends "layout.njk" %}
+
+{% block title %}Registrarse - Filomena Arte y Diseño{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h2>Registrarse</h2>
+    
+    <div id="register-alert" class="alert" style="display: none;"></div>
+
+    <form id="register-form">
+        <div class="input-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+        </div>
+
+        <div class="input-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" required placeholder="Tu apellido">
+        </div>
+
+        <div class="input-group">
+            <label for="nombreUsuario">Usuario</label>
+            <input type="text" id="nombreUsuario" name="nombreUsuario" required placeholder="Nombre de usuario">
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="tu@email.com">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">Crear Cuenta</button>
+    </form>
+
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <p style="color: var(--text-light); font-size: 0.9rem;">
+            ¿Ya tienes cuenta? <a href="/login" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">Inicia sesión aquí</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

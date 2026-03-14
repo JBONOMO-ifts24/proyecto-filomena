@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 exports.crearUsuario = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     // Forzar rol 'usuario' para registros públicos
     const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: 'usuario', suspendido: false });
     res.status(201).json(usuario);
@@ -18,6 +20,8 @@ exports.crearUsuario = async (req, res) => {
 exports.crearUsuarioAdmin = async (req, res) => {
   try {
     const { password, rol, ...rest } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: rol || 'usuario', suspendido: false });
     res.status(201).json(usuario);
   } catch (err) {
