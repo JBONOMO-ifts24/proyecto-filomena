@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 exports.crearUsuario = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     // Forzar rol 'usuario' para registros públicos
     const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: 'usuario', suspendido: false });
     res.status(201).json(usuario);
@@ -18,8 +20,42 @@ exports.crearUsuario = async (req, res) => {
 exports.crearUsuarioAdmin = async (req, res) => {
   try {
     const { password, rol, ...rest } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const usuario = await Usuario.create({ ...rest, password: hashedPassword, rol: rol || 'usuario', suspendido: false });
     res.status(201).json(usuario);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.obtenerMiPerfil = async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] }
+    });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(usuario);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.actualizarMiPerfil = async (req, res) => {
+  try {
+    const { password, rol, suspendido, ...rest } = req.body; // Never update rol or suspendido here
+    const usuario = await Usuario.findByPk(req.user.id);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      rest.password = await bcrypt.hash(password, salt);
+    }
+
+    await usuario.update(rest);
+    res.json(usuario);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

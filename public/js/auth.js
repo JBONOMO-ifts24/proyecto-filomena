@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const loginBtn = document.getElementById('nav-login-btn');
+    const navUserMenu = document.getElementById('nav-user-menu');
+    const navUserName = document.getElementById('nav-user-name');
     const logoutBtn = document.getElementById('nav-logout-btn');
 
     // Manejo de la Navegación (Mostrar/Ocultar Login vs Logout)
@@ -30,11 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (token) {
         if (loginBtn) loginBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
+        if (navUserMenu) navUserMenu.style.display = 'inline-flex';
 
         // Decodificar rol (JWT es base64 en la segunda parte)
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
+            if (navUserName) navUserName.textContent = payload.nombreUsuario || 'Usuario';
             if (payload.rol === 'admin') {
                 if (adminLink) adminLink.style.display = 'inline-block';
             }
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
         if (loginBtn) loginBtn.style.display = 'inline-block';
-        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (navUserMenu) navUserMenu.style.display = 'none';
         if (adminLink) adminLink.style.display = 'none';
     }
 
@@ -289,6 +292,49 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 alertBox.textContent = 'Error de conexión con el servidor.';
                 alertBox.className = 'alert error';
+            }
+        });
+    }
+
+    // Lógica para el Formulario de Registro
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const nombreUsuario = document.getElementById('nombreUsuario').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const alertBox = document.getElementById('register-alert');
+
+            try {
+                const response = await fetch('/api/usuarios', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nombre, apellido, nombreUsuario, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alertBox.textContent = 'Usuario creado con éxito. Redirigiendo al login...';
+                    alertBox.className = 'alert success';
+                    alertBox.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    alertBox.textContent = data.error || 'Error al crear usuario';
+                    alertBox.className = 'alert error';
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Error de conexión con el servidor.';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
             }
         });
     }

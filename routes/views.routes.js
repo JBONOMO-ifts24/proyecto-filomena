@@ -89,11 +89,11 @@ router.get('/blog', async (req, res) => {
     try {
         const posteos = await Posteo.findAll({
             include: [
-                { model: Usuario, as: 'autor', attributes: ['nombreUsuario'] },
+                { model: Usuario, as: 'autor', attributes: ['nombre', 'apellido', 'nombreUsuario'] },
                 {
                     model: Comentario,
                     as: 'comentarios',
-                    include: [{ model: Usuario, as: 'autor', attributes: ['nombreUsuario', 'id'] }]
+                    include: [{ model: Usuario, as: 'autor', attributes: ['nombre', 'apellido', 'nombreUsuario', 'id'] }]
                 }
             ],
             order: [['createdAt', 'DESC']]
@@ -109,7 +109,7 @@ router.get('/blog', async (req, res) => {
 router.get('/contacto', async (req, res) => {
     try {
         const mensajes = await MensajeContacto.findAll({
-            include: [{ model: Usuario, as: 'usuario', attributes: ['nombreUsuario'] }],
+            include: [{ model: Usuario, as: 'usuario', attributes: ['nombre', 'apellido', 'nombreUsuario'] }],
             order: [['createdAt', 'DESC']]
         });
         res.render('contacto', { mensajes });
@@ -127,6 +127,16 @@ router.get('/admin', (req, res) => {
 // Ruta de Login
 router.get('/login', (req, res) => {
     res.render('login');
+});
+
+// Ruta de Registro
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
+// Ruta del Perfil
+router.get('/perfil', (req, res) => {
+    res.render('perfil');
 });
 
 module.exports = router;

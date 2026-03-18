@@ -85,9 +85,14 @@
                 </div>
                 <div
                     style="font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
-                    <span>{{ msg.nombre }} {% if msg.usuario %} <small
-                            style="color: var(--accent-color); font-weight: normal;">(@{{ msg.usuario.nombreUsuario
-                            }})</small> {% endif %}</span>
+                    <span>
+                        {% if msg.usuario %}
+                            {{ msg.usuario.nombre }} {{ msg.usuario.apellido }}
+                            <small style="color: var(--accent-color); font-weight: normal;">(@{{ msg.usuario.nombreUsuario }})</small>
+                        {% else %}
+                            {{ msg.nombre }}
+                        {% endif %}
+                    </span>
                     <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-light);">{{ msg.createdAt |
                         date('DD/MM/YYYY') }}</span>
                 </div>

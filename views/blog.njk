@@ -14,7 +14,7 @@
                 <header style="margin-bottom: 1.5rem;">
                     <h2 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 0.5rem;">{{ posteo.titulo }}</h2>
                     <div style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">
-                        Por @{{ posteo.autor.nombreUsuario }} • {{ posteo.createdAt | date('DD/MM/YYYY HH:mm') }}
+                        Por {{ posteo.autor.nombre }} {{ posteo.autor.apellido }} <span style="color: var(--accent-color);">(@{{ posteo.autor.nombreUsuario }})</span> • {{ posteo.createdAt | date('DD/MM/YYYY HH:mm') }}
                     </div>
                 </header>
 
@@ -36,7 +36,7 @@
                             <div style="background: rgba(255,255,255,0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2);">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
-                                        @{{ comentario.autor.nombreUsuario }}
+                                        {{ comentario.autor.nombre }} {{ comentario.autor.apellido }} <span style="font-weight: normal; color: var(--accent-color);">(@{{ comentario.autor.nombreUsuario }})</span>
                                         <span style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">{{ comentario.createdAt | date('DD/MM/YYYY HH:mm') }}</span>
                                     </div>
                                     <div class="comment-actions" style="display: none;" data-comentario-id="{{ comentario.id }}" data-autor-id="{{ comentario.autor.id }}">
