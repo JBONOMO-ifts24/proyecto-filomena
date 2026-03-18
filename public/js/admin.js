@@ -125,6 +125,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Lógica para importar stock masivamente
+    const formImportarStock = document.getElementById('form-importar-stock');
+    if (formImportarStock) {
+        formImportarStock.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const fileInput = document.getElementById('archivo-stock');
+            if (fileInput.files.length === 0) {
+                alert('Por favor selecciona un archivo Excel.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('archivo_stock', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/api/admin/productos/importar', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    alert('Sesión expirada o sin permisos.');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.mensaje || 'Stock actualizado correctamente');
+                    formImportarStock.reset();
+                    loadData('productos'); // Recargar tabla
+                } else {
+                    const errorMsg = await response.json();
+                    alert(errorMsg.error || 'Error al actualizar el stock');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión al subir el archivo.');
+            }
+        });
+    }
+
     // Carga inicial
     loadData('productos');
 });
@@ -429,9 +474,45 @@ async function setPrincipalImage(imageId, productoId) {
     }
 }
 
+async function descargarStock() {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch('/api/admin/productos/exportar', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Sesión expirada o sin permisos.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
+        if (response.ok) {
+            // Manejar la descarga del blob
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'stock_filomena.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            alert('Error al descargar el stock');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error de conexión al descargar el archivo.');
+    }
+}
+
 // Global scope for onclick
 window.deleteItem = deleteItem;
 window.toggleUserStatus = toggleUserStatus;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.setPrincipalImage = setPrincipalImage;
+window.descargarStock = descargarStock;

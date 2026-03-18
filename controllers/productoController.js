@@ -1,4 +1,5 @@
 const Producto = require('../models/Producto');
+const xlsx = require('xlsx');
 const ModeloProducto = require('../models/ModeloProducto');
 const Imagen = require('../models/Imagen');
 
@@ -87,6 +88,62 @@ exports.modificarProducto = async (req, res) => {
     res.json(productoActualizado);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+exports.exportarStock = async (req, res) => {
+  try {
+    const productos = await Producto.findAll({
+      attributes: ['id', 'codigo', 'nombre', 'cantidad']
+    });
+
+    const data = productos.map(p => ({
+      ID: p.id,
+      Codigo: p.codigo,
+      Nombre: p.nombre,
+      Cantidad: p.cantidad
+    }));
+
+    const ws = xlsx.utils.json_to_sheet(data);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, "Stock");
+
+    const buffer = xlsx.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename="stock_filomena.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.importarStock = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió ningún archivo' });
+    }
+
+    const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(sheet);
+
+    let procesados = 0;
+    for (const row of data) {
+      if (row.ID && row.Cantidad !== undefined) {
+        await Producto.update({ cantidad: row.Cantidad }, { where: { id: row.ID } });
+        procesados++;
+      } else if (row.Codigo && row.Cantidad !== undefined) {
+        await Producto.update({ cantidad: row.Cantidad }, { where: { codigo: row.Codigo } });
+        procesados++;
+      }
+    }
+
+    res.json({ mensaje: `Stock actualizado para ${procesados} productos` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al procesar el archivo Excel' });
   }
 };
 

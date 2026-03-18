@@ -1,0 +1,41 @@
+{% extends "layout.njk" %}
+
+{% block title %}Mi Perfil - Filomena Arte y Diseño{% endblock %}
+
+{% block content %}
+<div class="auth-box" style="max-width: 500px;">
+    <h2>Mi Perfil</h2>
+    
+    <div id="perfil-alert" class="alert" style="display: none;"></div>
+
+    <form id="perfil-form" style="display: none;">
+        <div class="input-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="input-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" required>
+        </div>
+
+        <div class="input-group">
+            <label for="nombreUsuario">Usuario</label>
+            <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+        </div>
+
+        <div class="input-group" style="opacity: 0.7;">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required disabled title="El email no se puede cambiar">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Nueva Contraseña (dejar en blanco para mantener la actual)</label>
+            <input type="password" id="password" name="password" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">Guardar Cambios</button>
+    </form>
+</div>
+<script src="/js/perfil.js"></script>
+{% endblock %}
