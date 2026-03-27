@@ -19,6 +19,10 @@ env.addFilter('date', (date, format) => {
   return dayjs(date).format(format);
 });
 
+// Variables globales para vistas (Contacto)
+app.locals.CONTACT_WHATSAPP = process.env.CONTACT_WHATSAPP;
+app.locals.CONTACT_INSTAGRAM = process.env.CONTACT_INSTAGRAM;
+
 app.set('view engine', 'njk');
 
 // Middleware para servir archivos estáticos (CSS, JS cliente, Imágenes del front)

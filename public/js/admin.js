@@ -47,6 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminForm) {
         adminForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Capturar contenido de Quill si está disponible
+            const hiddenDescripcion = document.getElementById('hidden-descripcion');
+            const fallbackDescripcion = document.getElementById('fallback-descripcion');
+            
+            if (window.quillInstance && hiddenDescripcion) {
+                // Si Quill está inicializado, capturar su contenido
+                hiddenDescripcion.value = window.quillInstance.root.innerHTML || '';
+                console.log('✓ Descripción capturada desde Quill: ', hiddenDescripcion.value.substring(0, 50) + '...');
+            } else if (fallbackDescripcion && hiddenDescripcion) {
+                // Si se usa el textarea fallback, capturarlo
+                hiddenDescripcion.value = fallbackDescripcion.value;
+                console.log('✓ Descripción capturada desde fallback textarea');
+            }
+            
             const formData = new FormData(adminForm);
             const data = Object.fromEntries(formData.entries());
             const entity = adminForm.getAttribute('data-entity');
@@ -320,6 +335,11 @@ function openModal(entity, item = null) {
 
     title.innerText = item ? `Editar ${entity}` : `Agregar ${entity}`;
     fields.innerHTML = '';
+    
+    // Limpiar instancia anterior de Quill si existe
+    if (window.quillInstance) {
+        window.quillInstance = null;
+    }
 
     if (entity === 'usuario') {
         fields.innerHTML = `
@@ -354,16 +374,92 @@ function openModal(entity, item = null) {
         const token = localStorage.getItem('token');
         fields.innerHTML = `
             <input type="text" name="nombre" placeholder="Nombre" required class="admin-input" value="${item ? item.nombre : ''}">
-            <textarea name="descripcion" placeholder="Descripción" class="admin-input">${item ? item.descripcion || '' : ''}</textarea>
+            <label style="display: block; margin-bottom: 0.5rem; margin-top: 0.5rem; font-weight: 600; color: var(--primary-color);">Descripción (con formato)</label>
+            <div id="quill-editor" style="background: white; border-radius: 8px; border: 1px solid var(--glass-border); min-height: 200px; margin-bottom: 1rem;"></div>
+            <input type="hidden" name="descripcion" id="hidden-descripcion" value="">
             <input type="number" name="cantidad" placeholder="Cantidad" required class="admin-input" value="${item ? item.cantidad : ''}">
             <input type="number" name="precio" placeholder="Precio (Opcional)" step="0.01" class="admin-input" value="${item ? item.precio || '' : ''}">
             <select name="modeloProductoId" required class="admin-input" id="select-modelo">
                 <option value="">Cargando modelos...</option>
             </select>
-            <label style="display: block; margin-top: 1rem;">Imágenes (Máx. 3):</label>
+            <label style="display: block; margin-top: 1rem; margin-bottom: 0.5rem;">Imágenes (Máx. 3):</label>
             <input type="file" name="imagenes" class="admin-input" multiple accept="image/*">
             <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">Si seleccionas nuevas, se reemplazarán las anteriores.</small>
         `;
+        
+        // Inicializar Quill para la descripción con pequeño delay
+        setTimeout(() => {
+            // Verificar que Quill esté disponible
+            if (typeof Quill === 'undefined') {
+                console.error('Quill no cargó correctamente');
+                // Fallback: crear un textarea simple
+                const editor = document.getElementById('quill-editor');
+                if (editor) {
+                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' + 
+                        (item && item.descripcion ? item.descripcion : '') + 
+                        '</textarea>';
+                }
+                return;
+            }
+
+            try {
+                // Destruir instancia anterior si existe
+                const editorDiv = document.getElementById('quill-editor');
+                if (!editorDiv) return;
+                
+                // Limpiar cualquier editor anterior
+                if (window.quillInstance) {
+                    window.quillInstance = null;
+                }
+                
+                window.quillInstance = new Quill('#quill-editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['link'],
+                            ['clean']
+                        ]
+                    }
+                });
+                
+                // Cargar contenido anterior si es edición
+                if (item && item.descripcion) {
+                    window.quillInstance.root.innerHTML = item.descripcion;
+                } else {
+                    window.quillInstance.root.innerHTML = '';
+                }
+                
+                // Sincronizar con el campo oculto
+                const syncToHidden = () => {
+                    const hiddenField = document.getElementById('hidden-descripcion');
+                    if (hiddenField) {
+                        hiddenField.value = window.quillInstance.root.innerHTML || '';
+                    }
+                };
+                
+                // Guardar en el campo oculto al escribir
+                window.quillInstance.on('text-change', syncToHidden);
+                
+                // Sincronizar inicial
+                syncToHidden();
+                
+                console.log('✓ Quill inicializado correctamente');
+            } catch (err) {
+                console.error('Error al inicializar Quill:', err);
+                // Si falla, mostrar textarea alternativo
+                const editor = document.getElementById('quill-editor');
+                if (editor) {
+                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' + 
+                        (item && item.descripcion ? item.descripcion : '') + 
+                        '</textarea>';
+                }
+            }
+        }, 200);
+        
         fetch('/api/modeloproductos', { headers: { 'Authorization': `Bearer ${token}` } })
             .then(r => r.json())
             .then(modelos => {

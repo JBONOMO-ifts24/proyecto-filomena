@@ -23,20 +23,6 @@
             <button class="btn-primary" onclick="openModal('producto')">+ Nuevo Producto</button>
         </div>
 
-        <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <div>
-                <h3 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">Gestión Masiva de Stock</h3>
-                <p style="color: var(--text-light); margin: 0; font-size: 0.9rem;">Descarga la planilla actual, modifícala y súbela para actualizar el stock rápidamente.</p>
-            </div>
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <button class="btn-primary" onclick="descargarStock()" style="background-color: #2e7d32;"><svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg> Descargar XLS</button>
-                <form id="form-importar-stock" style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="file" id="archivo-stock" accept=".xlsx" style="font-size: 0.85rem;" required>
-                    <button type="submit" class="btn-primary" style="background-color: #0277bd;"><svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg> Subir y Actualizar</button>
-                </form>
-            </div>
-        </div>
-
         <div class="table-container" style="background: var(--surface); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
             <table style="width: 100%; border-collapse: collapse;">
                 <thead style="background: rgba(0,0,0,0.05);">
@@ -52,6 +38,20 @@
                     <!-- Dynamic Content -->
                 </tbody>
             </table>
+        </div>
+
+        <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h3 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">Gestión Masiva de Stock</h3>
+                <p style="color: var(--text-light); margin: 0; font-size: 0.9rem;">Descarga la planilla actual, modifícala y súbela para actualizar el stock rápidamente.</p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button class="btn-primary" onclick="descargarStock()" style="background-color: #2e7d32;"><svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg> Descargar XLS</button>
+                <form id="form-importar-stock" style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="file" id="archivo-stock" accept=".xlsx" style="font-size: 0.85rem;" required>
+                    <button type="submit" class="btn-primary" style="background-color: #0277bd;"><svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg> Subir y Actualizar</button>
+                </form>
+            </div>
         </div>
     </div>
 
