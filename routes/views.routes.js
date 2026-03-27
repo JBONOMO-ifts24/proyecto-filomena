@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 // Ruta del Catálogo
 router.get('/catalogo', async (req, res) => {
     try {
-        const categorias = await TipoProducto.findAll({
+        let categorias = await TipoProducto.findAll({
             include: [{
                 model: ModeloProducto,
                 as: 'modelos',
@@ -32,6 +32,17 @@ router.get('/catalogo', async (req, res) => {
                 }]
             }]
         });
+
+        // Filtrar modelos que tengan productos asociados
+        categorias = categorias.map(categoria => {
+            categoria.modelos = categoria.modelos.filter(
+                modelo => modelo.productos && modelo.productos.length > 0
+            );
+            return categoria;
+        });
+
+        // Filtrar categorías que tengan modelos después del filtrado anterior
+        categorias = categorias.filter(categoria => categoria.modelos.length > 0);
 
         // Renderizar la vista pasando las categorias obtenidas de la base de datos
         res.render('catalogo', { categorias });
