@@ -94,14 +94,15 @@ exports.modificarProducto = async (req, res) => {
 exports.exportarStock = async (req, res) => {
   try {
     const productos = await Producto.findAll({
-      attributes: ['id', 'codigo', 'nombre', 'cantidad']
+      attributes: ['id', 'codigo', 'nombre', 'cantidad', 'precio']
     });
 
     const data = productos.map(p => ({
       ID: p.id,
       Codigo: p.codigo,
       Nombre: p.nombre,
-      Cantidad: p.cantidad
+      Cantidad: p.cantidad,
+      Precio: p.precio
     }));
 
     const ws = xlsx.utils.json_to_sheet(data);
@@ -131,12 +132,18 @@ exports.importarStock = async (req, res) => {
 
     let procesados = 0;
     for (const row of data) {
-      if (row.ID && row.Cantidad !== undefined) {
-        await Producto.update({ cantidad: row.Cantidad }, { where: { id: row.ID } });
-        procesados++;
-      } else if (row.Codigo && row.Cantidad !== undefined) {
-        await Producto.update({ cantidad: row.Cantidad }, { where: { codigo: row.Codigo } });
-        procesados++;
+      const updateData = {};
+      if (row.Cantidad !== undefined) updateData.cantidad = row.Cantidad;
+      if (row.Precio !== undefined) updateData.precio = row.Precio;
+
+      if (Object.keys(updateData).length > 0) {
+        if (row.ID) {
+          await Producto.update(updateData, { where: { id: row.ID } });
+          procesados++;
+        } else if (row.Codigo) {
+          await Producto.update(updateData, { where: { codigo: row.Codigo } });
+          procesados++;
+        }
       }
     }
 

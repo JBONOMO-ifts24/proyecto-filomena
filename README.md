@@ -1,6 +1,6 @@
 
 # Filomena Arte y Diseño
-Página web y API para emprendimiento dedicado al arte, diseño y encuadernación artesanal.
+Página web y API para emprendimiento dedicado al arte, diseño y la encuadernación artesanal.
 
 ## 🚀 Características
 - **Backend Robusto:** Desarrollado con Node.js, Express y Sequelize (MySQL).
@@ -9,6 +9,7 @@ Página web y API para emprendimiento dedicado al arte, diseño y encuadernació
 - **Diseño Premium:** Interfaz de usuario con estética *Glassmorphism*, moderna y responsive.
 - **Dashboard Administrativo:** Panel de control integral para la gestión de Productos, Modelos, Tipos, Eventos, Posteos y Usuarios (CRUD completo).
 - **Inicio de Sesión con Google:** Integración con Google OAuth 2.0 mediante Passport.js.
+- **Gestión de Stock Masiva:** Funcionalidad para exportar el inventario a Excel (.xlsx), modificar cantidades y precios en lote, y volver a importar el archivo para una actualización rápida.
 - **Borrado Lógico (Soft Deletes):** Implementación de borrado seguro (`paranoid` models) para evitar la pérdida permanente de datos en todas las entidades clave.
 - **Gestión de Usuarios:** Posibilidad de suspender/activar usuarios, asignar roles de administrador y restricción de login para cuentas suspendidas.
 - **Gestión de Contenidos:**
@@ -58,7 +59,12 @@ Página web y API para emprendimiento dedicado al arte, diseño y encuadernació
    # Google OAuth (Opcional para desarrollo local)
    GOOGLE_CLIENT_ID=tu_google_client_id
    GOOGLE_CLIENT_SECRET=tu_google_client_secret
+
+   # Datos de Contacto (Para que no queden hardcodeados en el repo)
+   CONTACT_WHATSAPP=tu_numero_de_whatsapp
+   CONTACT_INSTAGRAM=tu_usuario_de_instagram
    ```
+
 4. Sincroniza la estructura de la base de datos:
    ```bash
    node sync.js
