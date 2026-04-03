@@ -19,6 +19,13 @@ env.addFilter('date', (date, format) => {
   return dayjs(date).format(format);
 });
 
+env.addFilter('pesosAR', (valor) => {
+  if (valor === null || valor === undefined || valor === '') return null;
+  const num = parseFloat(valor);
+  if (isNaN(num)) return null;
+  return '$ ' + num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+});
+
 // Variables globales para vistas (Contacto)
 app.locals.CONTACT_WHATSAPP = process.env.CONTACT_WHATSAPP;
 app.locals.CONTACT_INSTAGRAM = process.env.CONTACT_INSTAGRAM;

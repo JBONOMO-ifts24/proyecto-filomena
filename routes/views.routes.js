@@ -150,4 +150,9 @@ router.get('/perfil', (req, res) => {
     res.render('perfil');
 });
 
+// Ruta del Carrito
+router.get('/carrito', (req, res) => {
+    res.render('carrito');
+});
+
 module.exports = router;

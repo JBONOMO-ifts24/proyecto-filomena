@@ -64,35 +64,83 @@
                 </div>
             </div>
 
-            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    {% if producto.precio !== null and producto.precio !== undefined %}
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin: 0;">Precio</p>
-                        <p style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin: 0;">${{ producto.precio }}</p>
-                    {% else %}
-                        <p style="font-size: 1.1rem; color: var(--text-light); margin: 0;">Consultar precio</p>
-                    {% endif %}
-                </div>
-                
-                <div style="text-align: right;">
-                    <span style="display: inline-block; padding: 6px 15px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; 
-                        background: {{ '#e8f5e9' if producto.cantidad > 0 else '#ffebee' }}; 
-                        color: {{ '#2e7d32' if producto.cantidad > 0 else '#c62828' }};">
-                        {% if producto.cantidad > 0 %}
-                            En Stock: {{ producto.cantidad }}
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        {% if producto.precio !== null and producto.precio !== undefined %}
+                            <p style="font-size: 0.9rem; color: var(--text-light); margin: 0;">Precio</p>
+                            <p style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin: 0;">{{ producto.precio | pesosAR }}</p>
+                            <p style="font-size: 0.8rem; color: var(--text-light); margin: 0.3rem 0 0 0; font-style: italic;">Pesos Argentinos (ARS)</p>
                         {% else %}
-                            Sin Stock / Agotado
+                            <p style="font-size: 1.1rem; color: var(--text-light); margin: 0;">Consultar precio</p>
                         {% endif %}
-                    </span>
+                    </div>
+                    
+                    <div style="text-align: right;">
+                        <span style="display: inline-block; padding: 6px 15px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; 
+                            background: {{ '#e8f5e9' if producto.cantidad > 0 else '#ffebee' }}; 
+                            color: {{ '#2e7d32' if producto.cantidad > 0 else '#c62828' }};">
+                            {% if producto.cantidad > 0 %}
+                                En Stock: {{ producto.cantidad }}
+                            {% else %}
+                                Sin Stock / Agotado
+                            {% endif %}
+                        </span>
+                    </div>
                 </div>
+
+                {% if producto.precio !== null and producto.precio !== undefined and producto.cantidad > 0 %}
+                <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; height: 45px;">
+                        <button onclick="changeDetailQty(-1)" style="border: none; background: #f0f0f0; padding: 0 15px; cursor: pointer; font-weight: bold;">-</button>
+                        <input type="number" id="detail-qty" value="1" min="1" max="{{ producto.cantidad }}" style="width: 50px; text-align: center; border: none; font-size: 1rem; -moz-appearance: textfield;">
+                        <button onclick="changeDetailQty(1)" style="border: none; background: #f0f0f0; padding: 0 15px; cursor: pointer; font-weight: bold;">+</button>
+                    </div>
+                    <button class="btn-primary" style="flex: 1; height: 45px; display: flex; align-items: center; justify-content: center; gap: 10px;" id="add-to-cart-btn">
+                        <span>🛒</span> Sumar al carrito
+                    </button>
+                </div>
+                {% endif %}
+
+                <button class="btn-secondary" style="margin-top: 0.5rem; padding: 0.8rem; border: 1px solid var(--primary-color); background: transparent; color: var(--primary-color); border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="location.href='/contacto'">Consultar por este producto</button>
             </div>
-            
-            <button class="btn-primary" style="margin-top: 2rem; padding: 1rem;" onclick="location.href='/contacto'">Consultar por este producto</button>
         </div>
     </div>
 </div>
 
 <script>
+function changeDetailQty(delta) {
+    const input = document.getElementById('detail-qty');
+    if (!input) return;
+    let val = parseInt(input.value) + delta;
+    if (val < 1) val = 1;
+    const max = parseInt(input.getAttribute('max'));
+    if (val > max) val = max;
+    input.value = val;
+}
+
+document.getElementById('add-to-cart-btn')?.addEventListener('click', () => {
+    const qty = parseInt(document.getElementById('detail-qty').value);
+    const product = {
+        id: {{ producto.id }},
+        nombre: "{{ producto.nombre }}",
+        precio: {{ producto.precio or 0 }},
+        imagen: "{{ imagenesOrdenadas[0].url if imagenesOrdenadas.length > 0 else '' }}",
+        codigo: "{{ producto.codigo }}",
+        stock: {{ producto.cantidad }}
+    };
+    Cart.add(product, qty);
+    
+    // Feedback visual
+    const btn = document.getElementById('add-to-cart-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span>✅</span> Agregado!';
+    btn.style.background = '#2e7d32';
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.background = '';
+    }, 2000);
+});
 function showImage(url, thumb) {
     document.getElementById('main-product-image').src = url;
     // Reset borders
