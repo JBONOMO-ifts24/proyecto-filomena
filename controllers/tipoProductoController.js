@@ -2,9 +2,9 @@ const TipoProducto = require('../models/Tipo_Producto');
 
 exports.crearTipoProducto = async (req, res) => {
   try {
-    const { nombre, descripcion } = req.body;
+    const { nombre, descripcion, orden } = req.body;
     const codigo = req.body.codigo || `TIPO-${Date.now()}`;
-    const tipo = await TipoProducto.create({ nombre, descripcion, codigo });
+    const tipo = await TipoProducto.create({ nombre, descripcion, codigo, orden: orden || 0 });
     res.status(201).json(tipo);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -41,7 +41,7 @@ exports.modificarTipoProducto = async (req, res) => {
 
 exports.listarTipoProductos = async (req, res) => {
   try {
-    const tipos = await TipoProducto.findAll();
+    const tipos = await TipoProducto.findAll({ order: [['orden', 'ASC'], ['nombre', 'ASC']] });
     res.json(tipos);
   } catch (err) {
     res.status(500).json({ error: err.message });

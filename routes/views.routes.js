@@ -19,9 +19,12 @@ router.get('/', (req, res) => {
 router.get('/catalogo', async (req, res) => {
     try {
         let categorias = await TipoProducto.findAll({
+            order: [['orden', 'ASC'], ['nombre', 'ASC']],
             include: [{
                 model: ModeloProducto,
                 as: 'modelos',
+                separate: true,
+                order: [['orden', 'ASC'], ['nombre', 'ASC']],
                 include: [{
                     model: Producto,
                     as: 'productos',
@@ -33,11 +36,16 @@ router.get('/catalogo', async (req, res) => {
             }]
         });
 
-        // Filtrar modelos que tengan productos asociados
+        // Filtrar modelos que tengan productos asociados y ordenar por el campo orden
         categorias = categorias.map(categoria => {
-            categoria.modelos = categoria.modelos.filter(
-                modelo => modelo.productos && modelo.productos.length > 0
-            );
+            categoria.modelos = categoria.modelos
+                .filter(modelo => modelo.productos && modelo.productos.length > 0)
+                .sort((a, b) => {
+                    const ordenA = a.orden || 0;
+                    const ordenB = b.orden || 0;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    return a.nombre.localeCompare(b.nombre);
+                });
             return categoria;
         });
 

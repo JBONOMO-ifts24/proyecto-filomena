@@ -3,14 +3,14 @@ const TipoProducto = require('../models/Tipo_Producto');
 
 exports.crearModeloProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, tipoProductoId } = req.body;
+    const { nombre, descripcion, tipoProductoId, orden } = req.body;
     const codigo = req.body.codigo || `MOD-${Date.now()}`;
     // Verificar que el tipo de producto exista
     const tipo = await TipoProducto.findByPk(tipoProductoId);
     if (!tipo) {
       return res.status(400).json({ error: 'Tipo de producto no válido' });
     }
-    const modelo = await ModeloProducto.create({ codigo, nombre, descripcion, tipoProductoId });
+    const modelo = await ModeloProducto.create({ codigo, nombre, descripcion, tipoProductoId, orden: orden || 0 });
     res.status(201).json(modelo);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -19,7 +19,10 @@ exports.crearModeloProducto = async (req, res) => {
 
 exports.listarModeloProductos = async (req, res) => {
   try {
-    const modelos = await ModeloProducto.findAll({ include: [{ model: TipoProducto, as: 'tipo_producto' }] });
+    const modelos = await ModeloProducto.findAll({
+      include: [{ model: TipoProducto, as: 'tipo_producto' }],
+      order: [['orden', 'ASC'], ['nombre', 'ASC']]
+    });
     res.json(modelos);
   } catch (err) {
     res.status(500).json({ error: err.message });
