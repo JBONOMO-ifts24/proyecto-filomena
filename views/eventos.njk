@@ -11,7 +11,7 @@
     <p style="text-align: center; color: var(--text-light); font-size: 1.1rem;">Por el momento no hay eventos
         programados. ¡Vuelve pronto!</p>
     {% else %}
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
+    <div class="grid-auto-fill" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
         {% for evento in eventos %}
         <div
             style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); backdrop-filter: blur(10px); transition: transform 0.3s ease;">

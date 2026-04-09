@@ -28,7 +28,7 @@
                             {% if modelo.productos.length == 0 %}
                                 <p style="color: var(--text-light); font-style: italic; margin-left: 1rem;">Próximamente productos para este modelo.</p>
                             {% else %}
-                                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
+                <div class="grid-auto-fill" style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
                                     {% for producto in modelo.productos %}
                                         <a href="/producto/{{ producto.id }}" style="text-decoration: none; color: inherit;">
                                             <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 220px; overflow: hidden; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">

@@ -450,3 +450,71 @@ body {
   font-weight: 700;
   color: var(--primary-color);
 }
+
+/* ----- Responsive Design ----- */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 2% !important;
+  }
+
+  /* Ajustes para grids de 2 columnas */
+  .grid-2-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Ajustes para grids auto-fill */
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+  }
+
+  /* Ajustes para títulos */
+  h1 {
+    font-size: 2rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+  }
+
+  h3 {
+    font-size: 1.3rem !important;
+  }
+
+  /* Ajustes para párrafos */
+  p {
+    font-size: 1rem !important;
+  }
+
+  /* Ajustes para imágenes */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Ajustes específicos para navbar */
+  .navbar {
+    padding: 0.5rem 2% !important;
+  }
+
+  #navbar-logo {
+    height: 35px !important;
+  }
+
+  /* Ajustes para auth-box */
+  .auth-box {
+    padding: 1.5rem !important;
+    margin: 2rem auto !important;
+  }
+
+  /* Ajustes para cart */
+  .cart-table th,
+  .cart-table td {
+    padding: 0.5rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .cart-item-img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
