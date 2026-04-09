@@ -12,6 +12,11 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
 - **Gestión de Stock Masiva:** Funcionalidad para exportar el inventario a Excel (.xlsx), modificar cantidades y precios en lote, y volver a importar el archivo para una actualización rápida.
 - **Borrado Lógico (Soft Deletes):** Implementación de borrado seguro (`paranoid` models) para evitar la pérdida permanente de datos en todas las entidades clave.
 - **Gestión de Usuarios:** Posibilidad de suspender/activar usuarios, asignar roles de administrador y restricción de login para cuentas suspendidas.
+- **Carrito de Compras:** 
+  - Sistema de persistencia local (`localStorage`) para que los productos no se pierdan al navegar.
+  - Validación de stock en tiempo real (impede sumar más productos de los disponibles).
+  - Interfaz dinámica con contador en la barra de navegación y gestión de cantidades desde la vista de carrito.
+- **Pedidos vía WhatsApp:** Integración directa que genera un mensaje detallado con el pedido (productos, cantidades y totales) y redirige al WhatsApp oficial para concretar la venta.
 - **Gestión de Contenidos:**
   - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos.
   - **Eventos:** Gestión y visualización de ferias y talleres (con integración a Google Maps).

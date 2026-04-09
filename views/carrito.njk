@@ -1,0 +1,142 @@
+{% extends "layout.njk" %}
+
+{% block title %}Mi Carrito - Filomena Arte y Diseño{% endblock %}
+
+{% block content %}
+<div style="margin-top: 2rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+    <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 2rem; text-align: center;">Tu Carrito de Compras</h1>
+
+    <div id="cart-container">
+        <!-- El contenido se cargará dinámicamente con JS -->
+        <div style="text-align: center; padding: 3rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--glass-border);">
+            <p style="font-size: 1.2rem; color: var(--text-light);">Cargando tu carrito...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Template Literals for JS rendering -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderCart();
+
+    // Escuchar actualizaciones del carrito
+    window.addEventListener('cartUpdated', () => {
+        renderCart();
+    });
+});
+
+function renderCart() {
+    const container = document.getElementById('cart-container');
+    const items = Cart.get();
+
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 4rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-sm);">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Tu carrito está vacío</h2>
+                <p style="color: var(--text-light); margin-bottom: 2rem;">¡Date una vuelta por nuestro catálogo para encontrar algo especial!</p>
+                <a href="/catalogo" class="btn-primary" style="display: inline-block; text-decoration: none; padding: 1rem 2.5rem; width: auto;">Ir al Catálogo</a>
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Color/Modelo</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    let total = 0;
+
+    items.forEach(item => {
+        const subtotal = item.precio * item.quantity;
+        total += subtotal;
+
+        html += `
+            <tr>
+                <td style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="${item.imagen || '/images/no-image.png'}" alt="${item.nombre}" class="cart-item-img">
+                    <div>
+                        <div style="font-weight: 700; color: var(--primary-color);">${item.nombre}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">Cod: ${item.codigo}</div>
+                    </div>
+                </td>
+                <td>-</td>
+                <td>${Cart.formatPrice(item.precio)}</td>
+                <td>
+                    <div class="quantity-controls">
+                        <button onclick="Cart.updateQuantity(${item.id}, -1)" class="btn-qty">-</button>
+                        <span style="font-weight: 600; min-width: 20px; text-align: center;">${item.quantity}</span>
+                        <button onclick="Cart.updateQuantity(${item.id}, 1)" class="btn-qty">+</button>
+                    </div>
+                </td>
+                <td style="font-weight: 700;">${Cart.formatPrice(subtotal)}</td>
+                <td style="text-align: right;">
+                    <button onclick="Cart.remove(${item.id})" style="background: transparent; border: none; color: #ff5252; cursor: pointer; font-size: 1.2rem;" title="Eliminar">🗑️</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <div style="margin-bottom: 1.5rem;">
+                <span style="color: var(--text-light); font-size: 1.1rem; margin-right: 1rem;">Total estimado:</span>
+                <span class="total-price">${Cart.formatPrice(total)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button onclick="if(confirm('¿Vaciar todo el carrito?')) Cart.clear()" style="background: transparent; border: 1px solid #ccc; color: var(--text-light); padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Vaciar Carrito</button>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-secondary" style="padding: 0.8rem 1.5rem; border: 1px solid var(--primary-color); background: transparent; color: var(--primary-color); border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="location.href='/catalogo'">Seguir Comprando</button>
+                    <button class="btn-primary" style="padding: 0.8rem 2rem; width: auto;" onclick="finalizePurchase()">Finalizar Compra</button>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light); font-style: italic;">* Los precios están expresados en Pesos Argentinos (ARS).</p>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+function finalizePurchase() {
+    const items = Cart.get();
+    if (items.length === 0) return;
+
+    let message = "Hola Filomena! Me gustaría realizar un pedido:\n\n";
+    let total = 0;
+
+    items.forEach(item => {
+        const subtotal = item.precio * item.quantity;
+        total += subtotal;
+        message += `• ${item.quantity}x ${item.nombre} (${Cart.formatPrice(item.precio)})\n`;
+    });
+
+    message += `\n*TOTAL: ${Cart.formatPrice(total)}*`;
+
+    const whatsAppNumber = "{{ CONTACT_WHATSAPP }}";
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${whatsAppNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, '_blank');
+}
+</script>
+
+<style>
+.btn-secondary:hover {
+    background: rgba(43, 57, 69, 0.05);
+}
+</style>
+{% endblock %}
