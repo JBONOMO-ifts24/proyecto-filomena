@@ -14,6 +14,11 @@ const TipoProducto = sequelize.define('TipoProducto', {
   descripcion: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  orden: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   }
 }, {
   timestamps: true,

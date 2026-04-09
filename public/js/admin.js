@@ -230,9 +230,11 @@ function renderTable(entity, data) {
             const tipoNombre = item.tipo_producto ? item.tipo_producto.nombre : '-';
             row += `<td style="padding: 1rem;">${item.codigo}</td>
                     <td style="padding: 1rem;">${item.nombre}</td>
+                    <td style="padding: 1rem;">${item.orden ?? '-'}</td>
                     <td style="padding: 1rem;">${tipoNombre}</td>`;
         } else if (entity === 'tipos') {
             row += `<td style="padding: 1rem;">${item.nombre}</td>
+                    <td style="padding: 1rem;">${item.orden ?? '-'}</td>
                     <td style="padding: 1rem;">${item.descripcion || '-'}</td>`;
         } else if (entity === 'eventos') {
             row += `<td style="padding: 1rem;">${item.tipo}</td>
@@ -508,12 +510,14 @@ function openModal(entity, item = null) {
     } else if (entity === 'tipoproducto') {
         fields.innerHTML = `
             <input type="text" name="nombre" placeholder="Nombre del Tipo" required class="admin-input" value="${item ? item.nombre : ''}">
+            <input type="number" name="orden" placeholder="Orden" class="admin-input" value="${item ? item.orden : 0}" min="0">
             <textarea name="descripcion" placeholder="Descripción" class="admin-input">${item ? item.descripcion || '' : ''}</textarea>
         `;
     } else if (entity === 'modeloproducto') {
         const token = localStorage.getItem('token');
         fields.innerHTML = `
             <input type="text" name="nombre" placeholder="Nombre" required class="admin-input" value="${item ? item.nombre : ''}">
+            <input type="number" name="orden" placeholder="Orden" class="admin-input" value="${item ? item.orden : 0}" min="0">
             <textarea name="descripcion" placeholder="Descripción" class="admin-input">${item ? item.descripcion || '' : ''}</textarea>
             <select name="tipoProductoId" required class="admin-input" id="select-tipo">
                 <option value="">Cargando tipos...</option>

@@ -72,7 +72,7 @@ app.use('/uploads', express.static('uploads'));
 sequelize.authenticate()
   .then(() => {
     console.log('Conexión a la base de datos exitosa.');
-    return sequelize.sync();
+    return sequelize.sync({ alter: true });
   })
   .then(() => {
     app.listen(PORT, () => {
