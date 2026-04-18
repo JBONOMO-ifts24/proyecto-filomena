@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.suspendido = formData.has('suspendido');
             }
 
+            if (entity === 'producto') {
+                const visibleValue = formData.has('visible') ? 'true' : 'false';
+                formData.set('visible', visibleValue);
+                data.visible = visibleValue;
+            }
+
             if (data.precio === '') {
                 data.precio = null;
             }
@@ -222,10 +228,12 @@ function renderTable(entity, data) {
         let row = '<tr>';
         if (entity === 'productos') {
             const precioStr = item.precio ? `$${item.precio}` : '-';
+            const visibleStr = item.visible ? 'Sí' : 'No';
             row += `<td style="padding: 1rem;">${item.codigo}</td>
                     <td style="padding: 1rem;">${item.nombre}</td>
                     <td style="padding: 1rem;">${item.cantidad}</td>
-                    <td style="padding: 1rem;">${precioStr}</td>`;
+                    <td style="padding: 1rem;">${precioStr}</td>
+                    <td style="padding: 1rem;">${visibleStr}</td>`;
         } else if (entity === 'modelos') {
             const tipoNombre = item.tipo_producto ? item.tipo_producto.nombre : '-';
             row += `<td style="padding: 1rem;">${item.codigo}</td>
@@ -260,12 +268,32 @@ function renderTable(entity, data) {
         };
         const singularEntity = singularMap[entity] || entity;
 
-        row += `
+        let actions = `
             <td style="padding: 1rem; text-align: right;">
                 <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
                 <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
             </td>
-        </tr>`;
+        `;
+
+        if (entity === 'productos') {
+            actions = `
+                <td style="padding: 1rem; text-align: right;">
+                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                    <button class="btn-action" style="background: ${item.visible ? '#ff9800' : '#4caf50'}; color: white;" onclick="toggleVisible(${item.id}, ${item.visible})">${item.visible ? 'Ocultar' : 'Mostrar'}</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
+                </td>
+            `;
+        } else if (entity === 'usuarios') {
+            actions = `
+                <td style="padding: 1rem; text-align: right;">
+                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                    <button class="btn-action" style="background: ${item.suspendido ? '#4caf50' : '#ff9800'}; color: white;" onclick="toggleUserStatus(${item.id})">${item.suspendido ? 'Activar' : 'Suspender'}</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
+                </td>
+            `;
+        }
+
+        row += actions;
 
 
         tbody.innerHTML += row;
@@ -321,6 +349,37 @@ async function toggleUserStatus(id) {
         }
     } catch (err) {
         console.error(err);
+    }
+}
+
+async function toggleVisible(id, currentVisible) {
+    const token = localStorage.getItem('token');
+    const newVisible = !currentVisible;
+    try {
+        const response = await fetch(`/api/productos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ visible: newVisible })
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
+        if (response.ok) {
+            loadData('productos');
+        } else {
+            alert('Error al cambiar visibilidad');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error de conexión');
     }
 }
 
@@ -381,6 +440,7 @@ function openModal(entity, item = null) {
             <input type="hidden" name="descripcion" id="hidden-descripcion" value="">
             <input type="number" name="cantidad" placeholder="Cantidad" required class="admin-input" value="${item ? item.cantidad : ''}">
             <input type="number" name="precio" placeholder="Precio (Opcional)" step="0.01" class="admin-input" value="${item ? item.precio || '' : ''}">
+            <label style="display: block; margin-top: 0.5rem;"><input type="checkbox" name="visible" ${item ? (item.visible ? 'checked' : '') : 'checked'}> Visible en catálogo</label>
             <select name="modeloProductoId" required class="admin-input" id="select-modelo">
                 <option value="">Cargando modelos...</option>
             </select>

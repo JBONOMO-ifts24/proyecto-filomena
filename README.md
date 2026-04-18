@@ -108,6 +108,23 @@ Acceso mediante `/admin`. El panel permite:
 - Administrar estados de cuenta de usuarios (activar/suspender/promocionar).
 - Carga de imágenes con previsualización para productos y posteos.
 
+## 📝 Historial de Funciones y Correcciones
+- **Mejoras en lo responsive de las vistas:** Optimización de la interfaz para dispositivos móviles y tablets.
+- **Agregado de orden de tipo y modelo:** Implementación de ordenamiento jerárquico en el catálogo.
+- **Agregado de carrito de compras:** Sistema completo con persistencia y validación de stock.
+- **Mejoras en producto detalle y layout:** Mejor presentación de productos individuales.
+- **Mejora en exportación de productos a Excel:** Optimización del proceso de exportación e importación de inventario.
+- **Mejoras en las mensajerías:** Actualizaciones en sistemas de notificaciones y comunicación.
+- **Más mejoras en el login:** Correcciones y mejoras en la autenticación de usuarios.
+- **Mejoras en el login:** Refinamientos en el proceso de inicio de sesión.
+- **Mejoras en producto:** Actualizaciones en la gestión de productos.
+- **Agregado de logo en página principal:** Incorporación del branding oficial.
+- **Mejoras en eventos productos y posteos:** Refinamientos en eventos, productos y blog.
+- **Corrección y mejoras:** Correcciones generales y optimizaciones.
+- **Agregado de /admin:** Desarrollo del panel administrativo.
+- **Agregado de eventos:** Implementación de gestión de eventos.
+- **Agregado de vistas en HTML:** Creación de vistas frontend.
+- **Nuevos modelos y APIs: Evento, Posteo y Comentario:** Adición de nuevas entidades y endpoints.
 
 ---
-*Filomena Arte y Diseño - Pasión por la encuadernación artesanal.*
+*Filomena Arte y Diseño -*
