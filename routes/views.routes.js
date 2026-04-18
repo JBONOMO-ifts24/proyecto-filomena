@@ -28,6 +28,8 @@ router.get('/catalogo', async (req, res) => {
                 include: [{
                     model: Producto,
                     as: 'productos',
+                    where: { visible: true },
+                    required: false,
                     include: [{
                         model: Imagen,
                         as: 'imagenes'
@@ -64,7 +66,8 @@ router.get('/catalogo', async (req, res) => {
 router.get('/producto/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const producto = await Producto.findByPk(id, {
+        const producto = await Producto.findOne({
+            where: { id, visible: true },
             include: [
                 {
                     model: Imagen,

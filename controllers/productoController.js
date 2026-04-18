@@ -6,14 +6,16 @@ const Imagen = require('../models/Imagen');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, cantidad, modeloProductoId, precio } = req.body;
+    if (req.body.precio === '') req.body.precio = null;
+    const { nombre, descripcion, cantidad, modeloProductoId, precio, visible } = req.body;
     const codigo = req.body.codigo || `PROD-${Date.now()}`;
+    const visibleBoolean = visible === 'false' || visible === false ? false : true;
     // Verificar que el modelo exista
     const modelo = await ModeloProducto.findByPk(modeloProductoId);
     if (!modelo) {
       return res.status(400).json({ error: 'Modelo de producto no válido' });
     }
-    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId, precio });
+    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId, precio, visible: visible !== undefined ? visibleBoolean : true });
 
     // Si hay imágenes, crearlas y asociarlas
     if (req.files && req.files.length > 0) {
@@ -57,8 +59,12 @@ exports.eliminarProducto = async (req, res) => {
 
 exports.modificarProducto = async (req, res) => {
   try {
+    if (req.body.precio === '') req.body.precio = null;
     const { id } = req.params;
     const { modeloProductoId, nombre } = req.body;
+    if (req.body.visible !== undefined) {
+      req.body.visible = req.body.visible === 'false' || req.body.visible === false ? false : true;
+    }
     if (modeloProductoId) {
       const modelo = await ModeloProducto.findByPk(modeloProductoId);
       if (!modelo) {
@@ -134,7 +140,10 @@ exports.importarStock = async (req, res) => {
     for (const row of data) {
       const updateData = {};
       if (row.Cantidad !== undefined) updateData.cantidad = row.Cantidad;
-      if (row.Precio !== undefined) updateData.precio = row.Precio;
+      if (row.Precio !== undefined) {
+        const precio = row.Precio;
+        updateData.precio = precio === '' || precio === null ? null : precio;
+      }
 
       if (Object.keys(updateData).length > 0) {
         if (row.ID) {
