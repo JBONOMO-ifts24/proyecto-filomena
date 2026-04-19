@@ -21,6 +21,12 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
 body {
   font-family: var(--font-base);
   background: linear-gradient(135deg, #e0e5ec 0%, #f4f5f7 100%);
@@ -28,6 +34,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* ----- Navbar ----- */
@@ -161,7 +168,7 @@ body {
   }
 
   .nav-links {
-    position: absolute;
+    position: fixed;
     top: 70px;
     right: -100%;
     width: 250px;
