@@ -1,7 +1,7 @@
 const express = require('express');
 
 const path = require('path');
-const { crearProducto, listarProductos, eliminarProducto, modificarProducto, exportarStock, importarStock } = require('../controllers/productoController');
+const { crearProducto, listarProductos, eliminarProducto, modificarProducto, exportarStock, importarStock, duplicarProducto } = require('../controllers/productoController');
 const { auth } = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
@@ -17,5 +17,6 @@ router.post('/productos', auth, admin, upload.array('imagenes', 3), crearProduct
 router.get('/productos', auth, admin, listarProductos);
 router.delete('/productos/:id', auth, admin, eliminarProducto);
 router.put('/productos/:id', auth, admin, upload.array('imagenes', 3), modificarProducto);
+router.post('/productos/:id/duplicar', auth, admin, duplicarProducto);
 
 module.exports = router;
