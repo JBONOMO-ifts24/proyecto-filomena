@@ -131,6 +131,9 @@ function finalizePurchase() {
     const whatsappUrl = `https://wa.me/${whatsAppNumber}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, '_blank');
+    
+    // Vaciar el carrito después de abrir WhatsApp
+    Cart.clear();
 }
 </script>
 
