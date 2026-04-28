@@ -2,6 +2,7 @@ const Producto = require('../models/Producto');
 const xlsx = require('xlsx');
 const ModeloProducto = require('../models/ModeloProducto');
 const Imagen = require('../models/Imagen');
+const { Op } = require('sequelize');
 
 
 exports.crearProducto = async (req, res) => {
@@ -122,6 +123,50 @@ exports.exportarStock = async (req, res) => {
     res.send(buffer);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.duplicarProducto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Buscar el producto original con sus imágenes
+    const productoOriginal = await Producto.findByPk(id, {
+      include: [{ model: Imagen, as: 'imagenes' }]
+    });
+    
+    if (!productoOriginal) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    
+    // Generar nuevo código
+    const nuevoCodigo = `PROD-${Date.now()}`;
+    
+    // Crear el producto duplicado (sin las imágenes, se crean nuevas)
+    const nuevoProducto = await Producto.create({
+      codigo: nuevoCodigo,
+      nombre: `${productoOriginal.nombre} (Copia)`,
+      descripcion: productoOriginal.descripcion,
+      cantidad: 0, // Stock en 0 por defecto
+      modeloProductoId: productoOriginal.modeloProductoId,
+      precio: productoOriginal.precio,
+      visible: false // Invisible por defecto
+    });
+    
+    // Duplicar las imágenes (nueva URL para el archivo)
+    if (productoOriginal.imagenes && productoOriginal.imagenes.length > 0) {
+      const imagenesDuplicadas = productoOriginal.imagenes.map((img, index) => ({
+        url: img.url,
+        descripcion: img.descripcion,
+        productoId: nuevoProducto.id,
+        es_principal: index === 0
+      }));
+      await Imagen.bulkCreate(imagenesDuplicadas);
+    }
+    
+    res.status(201).json(nuevoProducto);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
 

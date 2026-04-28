@@ -279,6 +279,7 @@ function renderTable(entity, data) {
             actions = `
                 <td style="padding: 1rem; text-align: right;">
                     <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                    <button class="btn-action btn-duplicate" onclick="duplicateItem('${entity}', ${item.id})" title="Duplicar producto">Duplicar</button>
                     <button class="btn-action" style="background: ${item.visible ? '#ff9800' : '#4caf50'}; color: white;" onclick="toggleVisible(${item.id}, ${item.visible})">${item.visible ? 'Ocultar' : 'Mostrar'}</button>
                     <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
                 </td>
@@ -376,6 +377,36 @@ async function toggleVisible(id, currentVisible) {
             loadData('productos');
         } else {
             alert('Error al cambiar visibilidad');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error de conexión');
+    }
+}
+
+async function duplicateItem(entity, id) {
+    if (!confirm('¿Estás seguro de duplicar este producto? Se creará una copia con stock 0 y visible=no.')) return;
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`/api/productos/${id}/duplicar`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
+        if (response.ok) {
+            const nuevoProducto = await response.json();
+            alert(`Producto duplicado exitosamente: ${nuevoProducto.nombre}\nCódigo: ${nuevoProducto.codigo}`);
+            loadData('productos');
+        } else {
+            const error = await response.json();
+            alert('Error al duplicar: ' + error.error);
         }
     } catch (err) {
         console.error(err);
@@ -676,3 +707,4 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.setPrincipalImage = setPrincipalImage;
 window.descargarStock = descargarStock;
+window.duplicateItem = duplicateItem;
