@@ -25,6 +25,19 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
 
   - **Imágenes:** Carga y gestión de archivos multimedia mediante Multer.
 
+## 🌐 Páginas y Funcionalidades del Sitio Web
+El sitio web ofrece una experiencia completa para usuarios y administradores. A continuación, se detallan las páginas principales y sus funcionalidades:
+
+- **Inicio:** Página principal con mensaje de bienvenida, enlaces directos al catálogo y eventos, y un footer con el logo de la marca y un arte ASCII animado.
+- **Catálogo:** Exploración de productos artesanales organizados por categorías (tipos) y modelos, con detalles individuales de cada producto.
+- **Eventos:** Visualización de talleres y ferias programadas, incluyendo descripciones, fechas y ubicación con integración a Google Maps.
+- **Blog:** Publicaciones del administrador con sistema de comentarios donde los usuarios pueden interactuar (editar y eliminar sus propios comentarios).
+- **Contacto:** Formulario de contacto y muro público de mensajes para participación abierta.
+- **Carrito de Compras:** Sistema de carrito persistente con validación de stock, gestión de cantidades y opción de pedido vía WhatsApp.
+- **Perfil:** Área personal para usuarios registrados, donde pueden gestionar su información.
+- **Admin:** Panel exclusivo para administradores con herramientas CRUD para productos, usuarios, eventos, posteos y moderación de comentarios.
+- **Login/Registro:** Autenticación de usuarios con opción de inicio de sesión mediante Google OAuth 2.0.
+
 ## 🛠️ Tecnologías
 - **Core:** Node.js, Express
 - **Base de Datos:** MySQL via Sequelize ORM

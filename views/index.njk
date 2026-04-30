@@ -7,32 +7,31 @@
             alt="Filomena Arte y Diseño"
             style="width: 100%; max-width: 400px; height: auto; margin-bottom: 1.5rem; filter: drop-shadow(0 4px 6px
                 rgba(0,0,0,0.1));">
-        <p style="color: var(--text-light); font-size: 1.2rem; max-width: 700px; margin: 0 auto; line-height: 1.6; font-weight:
-                500;">
-            El arte de la encuadernación artesanal. Explora nuestros productos, talleres y conoce la historia detrás de cada detalle
-            cosido a mano.
-        </p>
-        <div
-            style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
-            <!-- Card de ejemplo -->
-            <div style="background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid
-                    var(--glass-border); max-width: 300px;">
-                <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Catálogo</h3>
-                <p style="color: var(--text-light); font-size: 0.95rem;">Explora nuestros productos.</p>
-                <a
-                    href="/catalogo"
-                    style="display: inline-block; margin-top: 1rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">Ver
-                    catálogo →</a>
-            </div>
-            <div style="background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid
-                    var(--glass-border); max-width: 300px;">
-                <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Eventos</h3>
-                <p style="color: var(--text-light); font-size: 0.95rem;">Clases, talleres y ferias de Filomena AyD</p>
-                <a
-                    href="/eventos"
-                    style="display: inline-block; margin-top: 1rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">Ver
-                    eventos →</a>
-            </div>
-        </div>
-    </div>
-{% endblock %}
+            <p
+                id="mensaje-bienvenida"
+                style="color: var(--text-light); font-size: 1.2rem; max-width: 700px; margin: 0 auto; line-height: 1.6; font-weight:
+                    500;">
+                {{ mensajeBienvenida | default("El arte de la encuadernación artesanal. Explora nuestros productos, talleres y conoce la historia detrás de cada detalle cosido a mano.") }}
+            </p>
+            <div
+                style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                <!-- Card de ejemplo -->
+                <div style="background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid
+                        var(--glass-border); max-width: 300px;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Catálogo</h3>
+                    <p style="color: var(--text-light); font-size: 0.95rem;">Explora nuestros productos.</p>
+                    <a
+                        href="/catalogo"
+                        style="display: inline-block; margin-top: 1rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">Ver
+                        catálogo →</a>
+                </div>
+                <div style="background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid
+                        var(--glass-border); max-width: 300px;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem;">Eventos</h3>
+                    <p style="color: var(--text-light); font-size: 0.95rem;">Clases, talleres y ferias de Filomena AyD</p>
+                    <a
+                        href="/eventos"
+                        style="display: inline-block; margin-top: 1rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">Ver
+                        eventos →</a>
+                
+            {% endblock %}

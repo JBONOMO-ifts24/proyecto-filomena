@@ -191,6 +191,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Lógica de formulario de Página de Inicio
+    const formInicio = document.getElementById('form-inicio');
+    if (formInicio) {
+        formInicio.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const mensajeInput = document.getElementById('mensaje-bienvenida-input');
+            const messageDiv = document.getElementById('inicio-message');
+            const mensaje = mensajeInput.value;
+
+            try {
+                const response = await fetch('/api/configuraciones', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clave: 'mensaje_bienvenida',
+                        valor: mensaje,
+                        descripcion: 'Mensaje de bienvenida en la página principal'
+                    })
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+
+                if (response.ok) {
+                    messageDiv.textContent = '✓ Mensaje guardado correctamente';
+                    messageDiv.style.background = '#e8f5e9';
+                    messageDiv.style.color = '#2e7d32';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+                } else {
+                    const error = await response.json();
+                    messageDiv.textContent = '✗ Error: ' + (error.error || 'Error desconocido');
+                    messageDiv.style.background = '#ffebee';
+                    messageDiv.style.color = '#d32f2f';
+                    messageDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.textContent = '✗ Error de conexión';
+                messageDiv.style.background = '#ffebee';
+                messageDiv.style.color = '#d32f2f';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // Cargar mensaje de bienvenida actual al iniciar
+        loadData('inicio');
+    }
+
     // Carga inicial
     loadData('productos');
 });
@@ -198,6 +255,35 @@ document.addEventListener('DOMContentLoaded', () => {
 // Función para cargar datos según la pestaña activa
 async function loadData(entity) {
     const token = localStorage.getItem('token');
+    
+    // Manejo especial para la pestaña de Página de Inicio
+    if (entity === 'inicio') {
+        try {
+            const response = await fetch('/api/configuraciones/mensaje_bienvenida', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+                return;
+            }
+
+            if (response.ok) {
+                const config = await response.json();
+                const mensajeInput = document.getElementById('mensaje-bienvenida-input');
+                if (mensajeInput && config.valor) {
+                    mensajeInput.value = config.valor;
+                }
+            }
+            // Si no existe la configuración, se deja el valor por defecto del placeholder
+        } catch (err) {
+            console.error('Error cargando configuración de inicio:', err);
+        }
+        return;
+    }
+    
     // Mapeo de nombres de pestaña a endpoints reales de la API
     const apiPathMap = { modelos: 'modeloproductos', tipos: 'tipoproductos' };
     const apiPath = apiPathMap[entity] || entity;

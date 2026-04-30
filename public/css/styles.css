@@ -524,4 +524,9 @@ body {
     width: 40px !important;
     height: 40px !important;
   }
+
+  .footer-logo {
+    margin-top: 1rem !important;
+    align-content: flex-start !important;
+  }
 }

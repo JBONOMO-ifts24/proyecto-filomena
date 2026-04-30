@@ -8,16 +8,34 @@
 
     <!-- Tabs Navigation -->
     <div style="display: flex; gap: 1rem; border-bottom: 1px solid var(--glass-border); margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
+        
         <button class="tab-btn active" data-tab="productos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Productos</button>
         <button class="tab-btn" data-tab="modelos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Modelos</button>
         <button class="tab-btn" data-tab="tipos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Tipos</button>
         <button class="tab-btn" data-tab="eventos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Eventos</button>
         <button class="tab-btn" data-tab="posteos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Posteos</button>
+        <button class="tab-btn" data-tab="inicio" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Página de Inicio</button>
         <button class="tab-btn" data-tab="usuarios" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Usuarios</button>
     </div>
 
     <!-- Tab Sections -->
-    <div id="productos-section" class="tab-content active">
+    <div id="inicio-section" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-color);">Configuración de Página de Inicio</h2>
+        </div>
+
+        <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+            <h3 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 1.1rem;">Mensaje de Bienvenida</h3>
+            <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">Este mensaje se muestra en la página principal del sitio.</p>
+            <form id="form-inicio">
+                <textarea id="mensaje-bienvenida-input" name="mensaje_bienvenida" class="admin-input" rows="4" placeholder="Escribe el mensaje de bienvenida..." style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.95rem; resize: vertical;"></textarea>
+                <button type="submit" class="btn-primary" style="margin-top: 1rem;">Guardar Cambios</button>
+            </form>
+            <div id="inicio-message" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+        </div>
+    </div>
+
+    <div id="productos-section" class="tab-content active" style="display: true;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h2 style="color: var(--accent-color);">Gestión de Productos</h2>
             <button class="btn-primary" onclick="openModal('producto')">+ Nuevo Producto</button>

@@ -51,6 +51,7 @@ const eventoRoutes = require('./routes/evento.routes');
 const posteoRoutes = require('./routes/posteo.routes');
 const mensajeContactoRoutes = require('./routes/mensajeContacto.routes');
 const viewsRoutes = require('./routes/views.routes');
+const configuracionRoutes = require('./routes/configuracion.routes');
 
 app.use('/api', usuarioRoutes);
 app.use('/api', authRoutes);
@@ -61,6 +62,7 @@ app.use('/api', imagenRoutes);
 app.use('/api', eventoRoutes);
 app.use('/api', posteoRoutes);
 app.use('/api', mensajeContactoRoutes);
+app.use('/api', configuracionRoutes);
 app.use('/', viewsRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
