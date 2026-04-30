@@ -315,6 +315,13 @@ function renderTable(entity, data) {
         if (entity === 'productos') {
             const precioStr = item.precio ? `$${item.precio}` : '-';
             const visibleStr = item.visible ? 'Sí' : 'No';
+            const imgPrincipal = item.imagenes && item.imagenes.length > 0
+                ? (item.imagenes.find(i => i.es_principal) || item.imagenes[0])
+                : null;
+            const imgCell = imgPrincipal
+                ? `<td style="padding: 0.5rem 1rem;"><img src="${imgPrincipal.url}" alt="${item.nombre}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);display:block;"></td>`
+                : `<td style="padding: 0.5rem 1rem;"><div style="width:48px;height:48px;border-radius:6px;border:1px dashed var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--text-light);">📷</div></td>`;
+            row += imgCell;
             row += `<td style="padding: 1rem;">${item.codigo}</td>
                     <td style="padding: 1rem;">${item.nombre}</td>
                     <td style="padding: 1rem;">${item.cantidad}</td>
