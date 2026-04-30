@@ -9,10 +9,20 @@ const Usuario = require('../models/Usuario');
 const Posteo = require('../models/Posteo');
 const Comentario = require('../models/Comentario');
 const MensajeContacto = require('../models/MensajeContacto');
+const Configuracion = require('../models/Configuracion');
 
 // Ruta principal (Home)
-router.get('/', (req, res) => {
-    res.render('index');
+router.get('/', async (req, res) => {
+    try {
+        // Obtener mensaje de bienvenida de la configuración
+        const mensajeBienvenida = await Configuracion.obtener('mensaje_bienvenida') || 
+            'El arte de la encuadernación artesanal. Explora nuestros productos, talleres y conoce la historia detrás de cada detalle cosido a mano.';
+        
+        res.render('index', { mensajeBienvenida });
+    } catch (error) {
+        console.error('Error al cargar la página principal:', error);
+        res.render('index', { mensajeBienvenida: null });
+    }
 });
 
 // Ruta del Catálogo
