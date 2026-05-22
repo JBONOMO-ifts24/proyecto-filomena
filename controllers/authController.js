@@ -19,11 +19,11 @@ exports.login = async (req, res) => {
     }
     // Generar token JWT
     const token = jwt.sign(
-      { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol },
+      { id: usuario.id, nombre: usuario.nombre, apellido: usuario.apellido, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol },
       process.env.JWT_SECRET || 'secreto',
       { expiresIn: '1h' }
     );
-    res.json({ mensaje: 'Login exitoso', token, usuario: { id: usuario.id, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol } });
+    res.json({ mensaje: 'Login exitoso', token, usuario: { id: usuario.id, nombre: usuario.nombre, apellido: usuario.apellido, nombreUsuario: usuario.nombreUsuario, email: usuario.email, rol: usuario.rol } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
