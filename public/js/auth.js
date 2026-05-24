@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Decodificar rol (JWT es base64 en la segunda parte)
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            if (navUserName) navUserName.textContent = payload.nombreUsuario || 'Usuario';
+            if (navUserName) {
+            navUserName.textContent = `${payload.nombre || ''} ${payload.apellido || ''}`.trim() || payload.nombreUsuario || 'Usuario';
+        }
             if (payload.rol === 'admin') {
                 if (adminLink) adminLink.style.display = 'inline-block';
             }
