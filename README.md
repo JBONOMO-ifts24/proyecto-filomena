@@ -10,6 +10,7 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
 - **Dashboard Administrativo:** Panel de control integral para la gestión de Productos, Modelos, Tipos, Eventos, Posteos y Usuarios (CRUD completo).
 - **Inicio de Sesión con Google:** Integración con Google OAuth 2.0 mediante Passport.js.
 - **Gestión de Stock Masiva:** Funcionalidad para exportar el inventario a Excel (.xlsx), modificar cantidades y precios en lote, y volver a importar el archivo para una actualización rápida.
+- **Exportación de Catálogo:** Descarga completa del catálogo de productos publicados en formato ZIP comprimido, incluye archivo JSON con metadatos y todas las imágenes de los productos (perfecto para backup, portales o migración).
 - **Borrado Lógico (Soft Deletes):** Implementación de borrado seguro (`paranoid` models) para evitar la pérdida permanente de datos en todas las entidades clave.
 - **Gestión de Usuarios:** Posibilidad de suspender/activar usuarios, asignar roles de administrador y restricción de login para cuentas suspendidas.
 - **Carrito de Compras:** 
@@ -120,8 +121,10 @@ Acceso mediante `/admin`. El panel permite:
 - Moderar cualquier comentario en el blog.
 - Administrar estados de cuenta de usuarios (activar/suspender/promocionar).
 - Carga de imágenes con previsualización para productos y posteos.
+- **Exportar catálogo completo:** Descargar todos los productos publicados en un archivo ZIP con metadatos en JSON e imágenes incluidas (ideal para backups, portales externos o migraciones de datos).
 
 ## 📝 Historial de Funciones y Correcciones
+- **Exportación de catálogo en ZIP:** Nueva funcionalidad que permite descargar todos los productos publicados con sus imágenes en un archivo ZIP comprimido, incluye archivo JSON con metadatos del catálogo.
 - **Mejoras en lo responsive de las vistas:** Optimización de la interfaz para dispositivos móviles y tablets.
 - **Agregado de orden de tipo y modelo:** Implementación de ordenamiento jerárquico en el catálogo.
 - **Agregado de carrito de compras:** Sistema completo con persistencia y validación de stock.

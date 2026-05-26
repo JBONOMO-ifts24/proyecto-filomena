@@ -1,8 +1,13 @@
 const Producto = require('../models/Producto');
 const xlsx = require('xlsx');
 const ModeloProducto = require('../models/ModeloProducto');
+const Tipo_Producto = require('../models/Tipo_Producto');
 const Imagen = require('../models/Imagen');
 const { Op } = require('sequelize');
+const AdmZip = require('adm-zip');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 
 exports.crearProducto = async (req, res) => {
@@ -205,6 +210,132 @@ exports.importarStock = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al procesar el archivo Excel' });
+  }
+};
+
+exports.exportarCatalogoZip = async (req, res) => {
+  const tempDir = path.join(os.tmpdir(), `catalogo-${Date.now()}`);
+  
+  try {
+    // Crear directorio temporal
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+
+    // Obtener todos los productos publicados con sus relaciones
+    const productos = await Producto.findAll({
+      where: { visible: true },
+      include: [
+        {
+          model: ModeloProducto,
+          as: 'modelo',
+          include: [
+            {
+              model: Tipo_Producto,
+              as: 'tipo_producto'
+            }
+          ]
+        },
+        {
+          model: Imagen,
+          as: 'imagenes'
+        }
+      ],
+      order: [['id', 'ASC']]
+    });
+
+    // Crear estructura JSON del catálogo
+    const catalogo = {
+      fecha_exportacion: new Date().toISOString(),
+      total_productos: productos.length,
+      productos: productos.map(p => ({
+        id: p.id,
+        codigo: p.codigo,
+        nombre: p.nombre,
+        descripcion: p.descripcion,
+        cantidad: p.cantidad,
+        precio: p.precio,
+        tipo_producto: p.modelo?.tipo_producto?.nombre,
+        modelo: p.modelo?.nombre,
+        imagenes: p.imagenes?.map(img => ({
+          nombre_archivo: path.basename(img.url),
+          es_principal: img.es_principal,
+          descripcion: img.descripcion
+        })) || []
+      }))
+    };
+
+    // Guardar JSON del catálogo
+    const catalogoPath = path.join(tempDir, 'catalogo.json');
+    fs.writeFileSync(catalogoPath, JSON.stringify(catalogo, null, 2), 'utf-8');
+
+    // Crear carpeta de imágenes temporal
+    const imagesDir = path.join(tempDir, 'imagenes');
+    if (!fs.existsSync(imagesDir)) {
+      fs.mkdirSync(imagesDir, { recursive: true });
+    }
+
+    // Copiar todas las imágenes
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    for (const producto of productos) {
+      for (const imagen of producto.imagenes) {
+        try {
+          const nombreArchivo = path.basename(imagen.url);
+          const rutaOrigen = path.join(uploadsDir, nombreArchivo);
+          const rutaDestino = path.join(imagesDir, nombreArchivo);
+
+          // Si el archivo existe en uploads, copiarlo
+          if (fs.existsSync(rutaOrigen)) {
+            fs.copyFileSync(rutaOrigen, rutaDestino);
+          }
+        } catch (err) {
+          console.error(`Error copiando imagen ${imagen.url}:`, err.message);
+        }
+      }
+    }
+
+    // Crear archivo ZIP con adm-zip
+    const zip = new AdmZip();
+    
+    // Agregar archivo catalogo.json
+    zip.addFile('catalogo.json', Buffer.from(fs.readFileSync(catalogoPath)));
+    
+    // Agregar todas las imágenes
+    if (fs.existsSync(imagesDir)) {
+      const imagenes = fs.readdirSync(imagesDir);
+      for (const imagen of imagenes) {
+        const imagePath = path.join(imagesDir, imagen);
+        zip.addFile(`imagenes/${imagen}`, fs.readFileSync(imagePath));
+      }
+    }
+
+    // Escribir ZIP a archivo temporal
+    const zipPath = path.join(os.tmpdir(), `catalogo-filomena-${Date.now()}.zip`);
+    zip.writeZip(zipPath);
+
+    // Enviar el ZIP como descarga
+    res.download(zipPath, 'catalogo-filomena.zip', (err) => {
+      if (err) console.error('Error enviando ZIP:', err);
+      
+      // Limpiar archivos temporales
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+        fs.unlinkSync(zipPath);
+      } catch (cleanupErr) {
+        console.error('Error limpiando archivos temporales:', cleanupErr);
+      }
+    });
+
+  } catch (err) {
+    console.error('Error exportando catálogo:', err);
+    res.status(500).json({ error: 'Error al exportar catálogo: ' + err.message });
+    
+    // Limpiar en caso de error
+    try {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    } catch (cleanupErr) {
+      console.error('Error limpiando después de error:', cleanupErr);
+    }
   }
 };
 

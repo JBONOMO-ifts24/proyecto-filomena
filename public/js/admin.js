@@ -793,6 +793,64 @@ async function descargarStock() {
     }
 }
 
+async function descargarCatalogo() {
+    const token = localStorage.getItem('token');
+    const statusEl = document.getElementById('catalogo-status');
+    
+    try {
+        // Mostrar estado de descarga
+        statusEl.textContent = '📦 Preparando descarga...';
+        statusEl.style.display = 'flex';
+        
+        const response = await fetch('/api/admin/catalogo/exportar-zip', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Sesión expirada o sin permisos.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            statusEl.style.display = 'none';
+            return;
+        }
+
+        if (response.ok) {
+            // Manejar la descarga del blob
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'catalogo-filomena.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            statusEl.textContent = '✅ Descarga completada';
+            statusEl.style.color = '#2e7d32';
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+        } else {
+            alert('Error al descargar el catálogo');
+            statusEl.textContent = '❌ Error en la descarga';
+            statusEl.style.color = '#c62828';
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error de conexión al descargar el archivo.');
+        statusEl.textContent = '❌ Error de conexión';
+        statusEl.style.color = '#c62828';
+        setTimeout(() => {
+            statusEl.style.display = 'none';
+        }, 3000);
+    }
+}
+
 // Global scope for onclick
 window.deleteItem = deleteItem;
 window.toggleUserStatus = toggleUserStatus;
@@ -800,4 +858,5 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.setPrincipalImage = setPrincipalImage;
 window.descargarStock = descargarStock;
+window.descargarCatalogo = descargarCatalogo;
 window.duplicateItem = duplicateItem;
