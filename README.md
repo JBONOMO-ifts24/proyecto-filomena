@@ -21,10 +21,10 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
 - **Gestión de Contenidos:**
   - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos.
   - **Eventos:** Gestión y visualización de ferias y talleres (con integración a Google Maps).
-  - **Blog/Posteos:** Sistema de publicaciones del administrador con capacidad de comentarios. Los usuarios pueden **editar y borrar** sus propios comentarios.
+  - **Blog/Posteos:** Sistema de publicaciones del administrador con capacidad de comentarios. Los usuarios pueden **editar y borrar** sus propios comentarios. Cada posteo admite **hasta 3 imágenes en carrusel** y **videos de YouTube embebidos**.
   - **Muro de Mensajes:** Página de contacto con muro público donde cualquier usuario (invitado o registrado) puede participar.
 
-  - **Imágenes:** Carga y gestión de archivos multimedia mediante Multer.
+  - **Imágenes:** Carga y gestión de archivos multimedia mediante Multer, incluyendo galería de posteos y contenido embebido.
 
 ## 🌐 Páginas y Funcionalidades del Sitio Web
 El sitio web ofrece una experiencia completa para usuarios y administradores. A continuación, se detallan las páginas principales y sus funcionalidades:
@@ -120,7 +120,7 @@ Acceso mediante `/admin`. El panel permite:
 - Programar y describir eventos.
 - Moderar cualquier comentario en el blog.
 - Administrar estados de cuenta de usuarios (activar/suspender/promocionar).
-- Carga de imágenes con previsualización para productos y posteos.
+- Carga de imágenes con previsualización para productos y posteos, incluyendo **galerías múltiples y videos de YouTube** en posteos.
 - **Exportar catálogo completo:** Descargar todos los productos publicados en un archivo ZIP con metadatos en JSON e imágenes incluidas (ideal para backups, portales externos o migraciones de datos).
 
 ## 📝 Historial de Funciones y Correcciones

@@ -342,8 +342,11 @@ function renderTable(entity, data) {
                     <td style="padding: 1rem;">${new Date(item.fecha_hora).toLocaleDateString()}</td>
                     <td style="padding: 1rem;">${item.lugar}</td>`;
         } else if (entity === 'posteos') {
+            const mediaCount = (Array.isArray(item.imagenes) ? item.imagenes.length : 0) + (item.youtube_url ? 1 : 0);
+            const mediaLabel = mediaCount > 0 ? `${mediaCount} medio${mediaCount === 1 ? '' : 's'}` : 'Sin medios';
             row += `<td style="padding: 1rem;">${item.titulo}</td>
-                    <td style="padding: 1rem;">${new Date(item.createdAt).toLocaleDateString()}</td>`;
+                    <td style="padding: 1rem;">${new Date(item.createdAt).toLocaleDateString()}</td>
+                    <td style="padding: 1rem;">${mediaLabel}</td>`;
         } else if (entity === 'usuarios') {
             row += `<td style="padding: 1rem;">${item.nombreUsuario}</td>
                     <td style="padding: 1rem;">${item.email}</td>
@@ -549,11 +552,15 @@ function openModal(entity, item = null) {
             <textarea name="descripcion" placeholder="Descripción del evento" class="admin-input" style="min-height: 100px;">${item ? item.descripcion : ''}</textarea>
        `;
     } else if (entity === 'posteo') {
+        const mediaCount = item && Array.isArray(item.imagenes) ? item.imagenes.length : 0;
         fields.innerHTML = `
             <input type="text" name="titulo" placeholder="Título" required class="admin-input" value="${item ? item.titulo : ''}">
             <textarea name="texto" placeholder="Texto del posteo" required class="admin-input" style="min-height: 100px;">${item ? item.texto : ''}</textarea>
-            <label style="display: block; margin-top: 1rem;">Imagen ${item ? '(Opcional/Nueva)' : ''}:</label>
-            <input type="file" name="imagen" class="admin-input">
+            <label style="display: block; margin-top: 1rem; font-weight: 600; color: var(--primary-color);">Imágenes del posteo (hasta 3)</label>
+            <input type="file" name="imagenes" class="admin-input" multiple accept="image/*">
+            <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">${item ? `Actualmente tienes ${mediaCount} imagen${mediaCount === 1 ? '' : 'es'} guardada${mediaCount === 1 ? '' : 's'}. Deja este campo vacío para conservarlas.` : 'Subí hasta 3 imágenes para crear el carrusel.'}</small>
+            <label style="display: block; margin-top: 1rem; font-weight: 600; color: var(--primary-color);">Video de YouTube (opcional)</label>
+            <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." class="admin-input" value="${item ? item.youtube_url || '' : ''}">
         `;
     } else if (entity === 'producto') {
         const token = localStorage.getItem('token');
