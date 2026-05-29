@@ -1,6 +1,5 @@
 const express = require('express');
 
-const path = require('path');
 const {
     crearPosteo,
     modificarPosteo,
@@ -19,8 +18,8 @@ const upload = require('../middleware/upload');
 
 
 // Rutas protegidas (solo admin)
-router.post('/posteos', auth, admin, upload.single('imagen'), crearPosteo);
-router.put('/posteos/:id', auth, admin, upload.single('imagen'), modificarPosteo);
+router.post('/posteos', auth, admin, upload.array('imagenes', 3), crearPosteo);
+router.put('/posteos/:id', auth, admin, upload.array('imagenes', 3), modificarPosteo);
 router.delete('/posteos/:id', auth, admin, eliminarPosteo);
 
 // Rutas de visualización (público)

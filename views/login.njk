@@ -32,5 +32,47 @@
             Continuar con Google
         </a>
     </div>
+
+    <!-- Aviso de Privacidad y Consentimiento -->
+    <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(0,0,0,0.02); border: 1px solid var(--glass-border); border-radius: 12px; border-left: 4px solid var(--accent-color);">
+        <details style="cursor: pointer;">
+            <summary style="color: var(--accent-color); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; user-select: none;">
+                <span style="font-size: 1.1rem;">📋</span>
+                <span>Aviso de Privacidad y Consentimiento Informado</span>
+            </summary>
+            
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--glass-border); color: var(--text-main); font-size: 0.85rem; line-height: 1.6;">
+                <p style="color: var(--text-light); font-style: italic; margin-bottom: 1rem;">
+                    Al iniciar sesión o registrarte en Filomena Arte y Diseño, prestas tu consentimiento libre e informado para el tratamiento de tus datos personales conforme a la Ley N° 25.326. Te informamos que:
+                </p>
+
+                <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">🔹 Recolección Mínima</p>
+                        <p>Solo recopilamos los datos estrictamente necesarios para la autenticación y la gestión de tus pedidos (nombre y correo electrónico).</p>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">🔹 Identidad Federada</p>
+                        <p>Si utilizas el inicio de sesión con Google, procesamos tu nombre y correo exclusivamente para la creación de tu perfil, sin compartir estos datos con terceros ni usarlos para fines comerciales no declarados.</p>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">🔹 Seguridad de Datos</p>
+                        <p>Tus contraseñas locales nunca se almacenan en texto plano; son cifradas de manera irreversible utilizando el algoritmo Bcryptjs.</p>
+                    </div>
+
+                    <div>
+                        <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">🔹 Tus Derechos</p>
+                        <p>En cualquier momento puedes solicitar el acceso, rectificación o la baja de tus datos poniéndote en contacto con la administración del sitio.</p>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-light); font-size: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                    ℹ️ Para más información sobre el tratamiento de datos, consulta nuestra política de privacidad completa o contacta con nuestro administrador.
+                </p>
+            </div>
+        </details>
+    </div>
 </div>
 {% endblock %}

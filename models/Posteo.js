@@ -13,7 +13,16 @@ const Posteo = sequelize.define('Posteo', {
     },
     imagen: {
         type: DataTypes.STRING,
-        allowNull: true // Puede haber posteos sin imagen
+        allowNull: true // Puede haber posteos sin imagen (compatibilidad)
+    },
+    imagenes: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: []
+    },
+    youtube_url: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     timestamps: true,

@@ -19,6 +19,9 @@
   },
   "homepage": "https://github.com/JBONOMO-ifts24/proyecto-filomena#readme",
   "dependencies": {
+    "adm-zip": "^0.5.17",
+    "archiver": "^8.0.0",
+    "axios": "^1.16.1",
     "bcryptjs": "^3.0.2",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.1",
