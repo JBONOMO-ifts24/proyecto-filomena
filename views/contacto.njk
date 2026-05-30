@@ -14,6 +14,7 @@
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% if CONTACT_WHATSAPP_VISIBLE %}
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div
                     style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -23,11 +24,13 @@
                     </svg>
                 </div>
                 <span style="color: var(--text-main); font-weight: 500;"><a
-                        href="https://wa.me/{{ CONTACT_WHATSAPP }}?text=Hola!%20Me%20comunico%20desde%20tu%20web"
+                        href="https://wa.me/{{ CONTACT_WHATSAPP }}?text=Hola!%20Me%20comnico%20desde%20tu%20web"
                         target="_blank">
                         WhatsApp
                     </a></span>
             </div>
+            {% endif %}
+            {% if CONTACT_INSTAGRAM_VISIBLE %}
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div
                     style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -39,6 +42,7 @@
                 <span style="color: var(--text-main); font-weight: 500;"><a
                         href="https://www.instagram.com/{{ CONTACT_INSTAGRAM }}/#" target="_blank">Instagram</a></span>
             </div>
+            {% endif %}
         </div>
 
         <div style="margin-top: 3rem;">
