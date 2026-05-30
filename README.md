@@ -10,6 +10,7 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
 - **Dashboard Administrativo:** Panel de control integral para la gestión de Productos, Modelos, Tipos, Eventos, Posteos y Usuarios (CRUD completo).
 - **Inicio de Sesión con Google:** Integración con Google OAuth 2.0 mediante Passport.js.
 - **Gestión de Stock Masiva:** Funcionalidad para exportar el inventario a Excel (.xlsx), modificar cantidades y precios en lote, y volver a importar el archivo para una actualización rápida.
+- **Sincronización con Google Sheets (Catálogo de Meta):** Exportación automática de productos visibles con formato compatible para el Catálogo de Facebook/Meta Business Manager, eliminando etiquetas HTML y formateando imágenes/precios.
 - **Exportación de Catálogo:** Descarga completa del catálogo de productos publicados en formato ZIP comprimido, incluye archivo JSON con metadatos y todas las imágenes de los productos (perfecto para backup, portales o migración).
 - **Borrado Lógico (Soft Deletes):** Implementación de borrado seguro (`paranoid` models) para evitar la pérdida permanente de datos en todas las entidades clave.
 - **Gestión de Usuarios:** Posibilidad de suspender/activar usuarios, asignar roles de administrador y restricción de login para cuentas suspendidas.
@@ -82,6 +83,12 @@ El sitio web ofrece una experiencia completa para usuarios y administradores. A 
    # Datos de Contacto (Para que no queden hardcodeados en el repo)
    CONTACT_WHATSAPP=tu_numero_de_whatsapp
    CONTACT_INSTAGRAM=tu_usuario_de_instagram
+
+   # Sincronización con Google Sheets (Catálogo de Meta)
+   DOMAIN=http://localhost:3000
+   GOOGLE_SHEET_ID=id_de_tu_hoja_de_calculo
+   GOOGLE_SERVICE_ACCOUNT_EMAIL=tu-cuenta-de-servicio@nombre-de-proyecto.iam.gserviceaccount.com
+   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
    ```
 
 4. Sincroniza la estructura de la base de datos:
@@ -104,6 +111,24 @@ Para habilitar el inicio de sesión con Google, sigue estos pasos:
 6. En **Orígenes de JavaScript autorizados**, añade: `http://localhost:3000`.
 7. En **URI de redireccionamiento autorizados**, añade: `http://localhost:3000/api/auth/google/callback`.
 8. Copia el **Client ID** y el **Client Secret** y pégalos en tu archivo `.env`.
+
+## 📊 Sincronización con Google Sheets (Catálogo de Meta)
+El sistema permite exportar de manera automática o programada los productos visibles al formato requerido por **Meta Business Manager (Facebook Catalog)**.
+
+### Configuración de Google Sheets:
+1. Crea una hoja de cálculo en Google Sheets y copia su ID desde la URL (`https://docs.google.com/spreadsheets/d/ID_AQUI/edit`). Pégala en `GOOGLE_SHEET_ID`.
+2. Crea una cuenta de servicio en **Google Cloud Console**, habilita la **Google Sheets API** para tu proyecto, y genera una clave privada en formato JSON.
+3. Copia el correo electrónico de la cuenta de servicio y pégalo en `GOOGLE_SERVICE_ACCOUNT_EMAIL`.
+4. Comparte tu hoja de cálculo con ese correo otorgándole permisos de **Editor**.
+5. Copia la clave privada de tu archivo JSON (incluyendo las líneas de inicio y fin) y pégala en `GOOGLE_PRIVATE_KEY` en tu archivo `.env` (asegurándote de mantener los saltos de línea codificados como `\n` o encerrando el valor entre comillas).
+6. Configura `DOMAIN` en el `.env` con la URL base de tu servidor (ej: `http://localhost:3000` en desarrollo) para que las imágenes y los enlaces a los productos generen URLs absolutas válidas para Meta.
+
+### Métodos de Sincronización:
+- **Vía API:** Realiza una petición `GET` a `/api/admin/productos/exportar-sheets`. Esta ruta requiere autenticación de administrador.
+- **Vía Script (CLI):** Ejecuta en la terminal el siguiente comando (útil para automatizar mediante tareas programadas/cron):
+  ```bash
+  node scripts/sync-google-sheets.js
+  ```
 
 ## 🔐 API & Seguridad
 - **JWT Fix:** Se corrigió un bug crítico donde el token no incluía el rol del usuario, impidiendo la validación de administradores. Ahora el payload contiene `{ id, nombreUsuario, rol }`.
