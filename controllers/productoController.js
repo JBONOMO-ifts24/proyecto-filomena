@@ -1,5 +1,7 @@
 const Producto = require('../models/Producto');
 const xlsx = require('xlsx');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 const ModeloProducto = require('../models/ModeloProducto');
 const Tipo_Producto = require('../models/Tipo_Producto');
 const Imagen = require('../models/Imagen');
@@ -336,6 +338,18 @@ exports.exportarCatalogoZip = async (req, res) => {
     } catch (cleanupErr) {
       console.error('Error limpiando después de error:', cleanupErr);
     }
+  }
+};
+
+const { ejecutarExportacion } = require('../utils/googleSheetsExport');
+
+exports.exportarGoogleSheets = async (req, res) => {
+  try {
+    const total = await ejecutarExportacion();
+    res.json({ mensaje: `Se exportaron ${total} productos a Google Sheets exitosamente.` });
+  } catch (err) {
+    console.error('Error exportando a Google Sheets:', err);
+    res.status(500).json({ error: 'Error al exportar a Google Sheets: ' + err.message });
   }
 };
 

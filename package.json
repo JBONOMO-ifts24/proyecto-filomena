@@ -26,6 +26,8 @@
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "google-auth-library": "^10.6.2",
+    "google-spreadsheet": "^5.2.0",
     "jimp": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
