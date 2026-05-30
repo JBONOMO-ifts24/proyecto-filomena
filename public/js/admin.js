@@ -48,6 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
         adminForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Validar tamaño de imágenes en el cliente (Máx. 2MB)
+            const fileInputs = adminForm.querySelectorAll('input[type="file"]');
+            for (const input of fileInputs) {
+                if (input.files) {
+                    for (const file of input.files) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`La imagen "${file.name}" supera el límite de 2MB permitido.`);
+                            return;
+                        }
+                    }
+                }
+            }
+            
             // Capturar contenido de Quill si está disponible
             const hiddenDescripcion = document.getElementById('hidden-descripcion');
             const fallbackDescripcion = document.getElementById('fallback-descripcion');

@@ -1,6 +1,7 @@
 const express = require('express');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const multer = require('multer');
 const dayjs = require('dayjs');
 const sequelize = require('./db/sequelize');
 const passport = require('./config/passport');
@@ -67,6 +68,21 @@ app.use('/', viewsRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
 app.use('/uploads', express.static('uploads'));
+
+// Middleware global para manejo de errores (especialmente Multer)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'La imagen supera el límite de tamaño permitido de 2MB.' });
+    }
+    return res.status(400).json({ error: `Error al subir archivo: ${err.message}` });
+  } else if (err) {
+    // Si es un error de validación o tipo no permitido, usar 400
+    const statusCode = err.status || (err.message && err.message.includes('permitido') ? 400 : 500);
+    return res.status(statusCode).json({ error: err.message || 'Error interno del servidor' });
+  }
+  next();
+});
 
 // (La ruta '/' será manejada ahora por views.routes)
 
