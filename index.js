@@ -1,6 +1,7 @@
 const express = require('express');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const multer = require('multer');
 const dayjs = require('dayjs');
 const sequelize = require('./db/sequelize');
 const passport = require('./config/passport');
@@ -26,9 +27,28 @@ env.addFilter('pesosAR', (valor) => {
   return '$ ' + num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 });
 
-// Variables globales para vistas (Contacto)
-app.locals.CONTACT_WHATSAPP = process.env.CONTACT_WHATSAPP;
-app.locals.CONTACT_INSTAGRAM = process.env.CONTACT_INSTAGRAM;
+// Middleware para inyectar configuraciones dinámicas globales en las vistas
+app.use(async (req, res, next) => {
+  try {
+    const Configuracion = require('./models/Configuracion');
+    const dbWhatsapp = await Configuracion.obtener('contact_whatsapp');
+    const dbInstagram = await Configuracion.obtener('contact_instagram');
+    const dbWhatsappVisible = await Configuracion.obtener('contact_whatsapp_visible');
+    const dbInstagramVisible = await Configuracion.obtener('contact_instagram_visible');
+
+    res.locals.CONTACT_WHATSAPP = dbWhatsapp !== null ? dbWhatsapp : (process.env.CONTACT_WHATSAPP || '');
+    res.locals.CONTACT_INSTAGRAM = dbInstagram !== null ? dbInstagram : (process.env.CONTACT_INSTAGRAM || '');
+    res.locals.CONTACT_WHATSAPP_VISIBLE = dbWhatsappVisible !== null ? dbWhatsappVisible === 'true' : true;
+    res.locals.CONTACT_INSTAGRAM_VISIBLE = dbInstagramVisible !== null ? dbInstagramVisible === 'true' : true;
+  } catch (error) {
+    console.error('Error cargando configuraciones dinámicas:', error);
+    res.locals.CONTACT_WHATSAPP = process.env.CONTACT_WHATSAPP || '';
+    res.locals.CONTACT_INSTAGRAM = process.env.CONTACT_INSTAGRAM || '';
+    res.locals.CONTACT_WHATSAPP_VISIBLE = true;
+    res.locals.CONTACT_INSTAGRAM_VISIBLE = true;
+  }
+  next();
+});
 
 app.set('view engine', 'njk');
 
@@ -67,6 +87,21 @@ app.use('/', viewsRoutes);
 
 // Servir archivos estáticos de la carpeta uploads
 app.use('/uploads', express.static('uploads'));
+
+// Middleware global para manejo de errores (especialmente Multer)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'La imagen supera el límite de tamaño permitido de 2MB.' });
+    }
+    return res.status(400).json({ error: `Error al subir archivo: ${err.message}` });
+  } else if (err) {
+    // Si es un error de validación o tipo no permitido, usar 400
+    const statusCode = err.status || (err.message && err.message.includes('permitido') ? 400 : 500);
+    return res.status(statusCode).json({ error: err.message || 'Error interno del servidor' });
+  }
+  next();
+});
 
 // (La ruta '/' será manejada ahora por views.routes)
 

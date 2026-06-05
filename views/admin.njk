@@ -14,22 +14,52 @@
         <button class="tab-btn" data-tab="tipos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Tipos</button>
         <button class="tab-btn" data-tab="eventos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Eventos</button>
         <button class="tab-btn" data-tab="posteos" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Posteos</button>
-        <button class="tab-btn" data-tab="inicio" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Página de Inicio</button>
+        <button class="tab-btn" data-tab="inicio" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Config. Site</button>
         <button class="tab-btn" data-tab="usuarios" style="background: none; border: none; padding: 0.8rem 1.5rem; color: var(--text-main); font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease;">Usuarios</button>
     </div>
 
     <!-- Tab Sections -->
     <div id="inicio-section" class="tab-content" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="color: var(--accent-color);">Configuración de Página de Inicio</h2>
+            <h2 style="color: var(--accent-color);">Configuración del Sitio</h2>
         </div>
 
         <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
-            <h3 style="color: var(--primary-color); margin-bottom: 1rem; font-size: 1.1rem;">Mensaje de Bienvenida</h3>
-            <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">Este mensaje se muestra en la página principal del sitio.</p>
-            <form id="form-inicio">
-                <textarea id="mensaje-bienvenida-input" name="mensaje_bienvenida" class="admin-input" rows="4" placeholder="Escribe el mensaje de bienvenida..." style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.95rem; resize: vertical;"></textarea>
-                <button type="submit" class="btn-primary" style="margin-top: 1rem;">Guardar Cambios</button>
+            <form id="form-inicio" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">Mensaje de Bienvenida</h3>
+                    <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">Este mensaje se muestra en la página principal del sitio.</p>
+                    <textarea id="mensaje-bienvenida-input" name="mensaje_bienvenida" class="admin-input" rows="4" placeholder="Escribe el mensaje de bienvenida..." style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.7); font-family: inherit; font-size: 0.95rem; resize: vertical;"></textarea>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 0.5rem 0;">
+
+                <div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">Canales de Contacto</h3>
+                    <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.9rem;">Configura los datos de contacto y su visibilidad en la página de Contacto.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="font-weight: 600; color: var(--text-main);">WhatsApp (sólo números, ej: 54911...)</label>
+                            <input type="text" id="contact-whatsapp-input" name="contact_whatsapp" class="admin-input" placeholder="Ej: 5491176080024">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem; cursor: pointer;">
+                                <input type="checkbox" id="contact-whatsapp-visible-input" name="contact_whatsapp_visible" checked>
+                                Mostrar WhatsApp en la página de contacto
+                            </label>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="font-weight: 600; color: var(--text-main);">Usuario de Instagram</label>
+                            <input type="text" id="contact-instagram-input" name="contact_instagram" class="admin-input" placeholder="Ej: filomena.arteydiseno">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem; cursor: pointer;">
+                                <input type="checkbox" id="contact-instagram-visible-input" name="contact_instagram_visible" checked>
+                                Mostrar Instagram en la página de contacto
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="align-self: flex-start; margin-top: 0.5rem;">Guardar Cambios</button>
             </form>
             <div id="inicio-message" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
         </div>

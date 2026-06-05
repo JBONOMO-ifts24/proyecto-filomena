@@ -48,6 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
         adminForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Validar tamaño de imágenes en el cliente (Máx. 2MB)
+            const fileInputs = adminForm.querySelectorAll('input[type="file"]');
+            for (const input of fileInputs) {
+                if (input.files) {
+                    for (const file of input.files) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`La imagen "${file.name}" supera el límite de 2MB permitido.`);
+                            return;
+                        }
+                    }
+                }
+            }
+            
             // Capturar contenido de Quill si está disponible
             const hiddenDescripcion = document.getElementById('hidden-descripcion');
             const fallbackDescripcion = document.getElementById('fallback-descripcion');
@@ -197,40 +210,53 @@ document.addEventListener('DOMContentLoaded', () => {
         formInicio.addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = localStorage.getItem('token');
-            const mensajeInput = document.getElementById('mensaje-bienvenida-input');
             const messageDiv = document.getElementById('inicio-message');
-            const mensaje = mensajeInput.value;
+            
+            const msgBienvenida = document.getElementById('mensaje-bienvenida-input').value;
+            const waNumber = document.getElementById('contact-whatsapp-input').value;
+            const waVisible = document.getElementById('contact-whatsapp-visible-input').checked ? 'true' : 'false';
+            const igUser = document.getElementById('contact-instagram-input').value;
+            const igVisible = document.getElementById('contact-instagram-visible-input').checked ? 'true' : 'false';
+
+            const settings = [
+                { clave: 'mensaje_bienvenida', valor: msgBienvenida, descripcion: 'Mensaje de bienvenida en la página principal' },
+                { clave: 'contact_whatsapp', valor: waNumber, descripcion: 'Número de WhatsApp de contacto' },
+                { clave: 'contact_whatsapp_visible', valor: waVisible, descripcion: 'Visibilidad de WhatsApp en contacto' },
+                { clave: 'contact_instagram', valor: igUser, descripcion: 'Nombre de usuario de Instagram de contacto' },
+                { clave: 'contact_instagram_visible', valor: igVisible, descripcion: 'Visibilidad de Instagram en contacto' }
+            ];
 
             try {
-                const response = await fetch('/api/configuraciones', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        clave: 'mensaje_bienvenida',
-                        valor: mensaje,
-                        descripcion: 'Mensaje de bienvenida en la página principal'
+                // Guardar todas las configuraciones en paralelo
+                const promises = settings.map(setting => 
+                    fetch('/api/configuraciones', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(setting)
                     })
-                });
+                );
 
-                if (response.status === 401 || response.status === 403) {
+                const responses = await Promise.all(promises);
+                const allOk = responses.every(r => r.ok);
+
+                if (responses.some(r => r.status === 401 || r.status === 403)) {
                     alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
                     localStorage.removeItem('token');
                     window.location.href = '/login';
                     return;
                 }
 
-                if (response.ok) {
-                    messageDiv.textContent = '✓ Mensaje guardado correctamente';
+                if (allOk) {
+                    messageDiv.textContent = '✓ Configuración guardada correctamente';
                     messageDiv.style.background = '#e8f5e9';
                     messageDiv.style.color = '#2e7d32';
                     messageDiv.style.display = 'block';
                     setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
                 } else {
-                    const error = await response.json();
-                    messageDiv.textContent = '✗ Error: ' + (error.error || 'Error desconocido');
+                    messageDiv.textContent = '✗ Error al guardar algunas configuraciones';
                     messageDiv.style.background = '#ffebee';
                     messageDiv.style.color = '#d32f2f';
                     messageDiv.style.display = 'block';
@@ -259,7 +285,7 @@ async function loadData(entity) {
     // Manejo especial para la pestaña de Página de Inicio
     if (entity === 'inicio') {
         try {
-            const response = await fetch('/api/configuraciones/mensaje_bienvenida', {
+            const response = await fetch('/api/configuraciones', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -271,13 +297,20 @@ async function loadData(entity) {
             }
 
             if (response.ok) {
-                const config = await response.json();
-                const mensajeInput = document.getElementById('mensaje-bienvenida-input');
-                if (mensajeInput && config.valor) {
-                    mensajeInput.value = config.valor;
-                }
+                const configs = await response.json();
+                configs.forEach(c => {
+                    // Mapear clave con id de input en el formulario de inicio
+                    const elId = c.clave.replace(/_/g, '-') + '-input';
+                    const el = document.getElementById(elId);
+                    if (el) {
+                        if (el.type === 'checkbox') {
+                            el.checked = c.valor === 'true';
+                        } else {
+                            el.value = c.valor || '';
+                        }
+                    }
+                });
             }
-            // Si no existe la configuración, se deja el valor por defecto del placeholder
         } catch (err) {
             console.error('Error cargando configuración de inicio:', err);
         }
