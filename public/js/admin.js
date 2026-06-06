@@ -588,13 +588,75 @@ function openModal(entity, item = null) {
         const mediaCount = item && Array.isArray(item.imagenes) ? item.imagenes.length : 0;
         fields.innerHTML = `
             <input type="text" name="titulo" placeholder="Título" required class="admin-input" value="${item ? item.titulo : ''}">
-            <textarea name="texto" placeholder="Texto del posteo" required class="admin-input" style="min-height: 100px;">${item ? item.texto : ''}</textarea>
+            <div id="quill-editor-posteo" style="background: white; border-radius: 8px; border: 1px solid var(--glass-border); min-height: 200px; margin-bottom: 1rem;"></div>
+            <input type="hidden" name="texto" id="hidden-texto-posteo" value="${item ? item.texto || '' : ''}">
             <label style="display: block; margin-top: 1rem; font-weight: 600; color: var(--primary-color);">Imágenes del posteo (hasta 3)</label>
             <input type="file" name="imagenes" class="admin-input" multiple accept="image/*">
             <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">${item ? `Actualmente tienes ${mediaCount} imagen${mediaCount === 1 ? '' : 'es'} guardada${mediaCount === 1 ? '' : 's'}. Deja este campo vacío para conservarlas.` : 'Subí hasta 3 imágenes para crear el carrusel.'}</small>
             <label style="display: block; margin-top: 1rem; font-weight: 600; color: var(--primary-color);">Video de YouTube (opcional)</label>
             <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." class="admin-input" value="${item ? item.youtube_url || '' : ''}">
         `;
+
+        // Initialize Quill for posteo description with delay
+        setTimeout(() => {
+            // Check if Quill is loaded
+            if (typeof Quill === 'undefined') {
+                console.error('Quill not loaded');
+                // Fallback: simple textarea
+                const editor = document.getElementById('quill-editor-posteo');
+                if (editor) {
+                    editor.innerHTML = '<textarea id="fallback-texto-posteo" name="texto" placeholder="Texto del posteo" class="admin-input" style="width: 100%; min-height: 200px;">' +
+                        (item && item.texto ? item.texto : '') +
+                        '</textarea>';
+                }
+                return;
+            }
+            try {
+                // Clean previous instance
+                const editorDiv = document.getElementById('quill-editor-posteo');
+                if (!editorDiv) return;
+                if (window.quillPosteo) {
+                    window.quillPosteo = null;
+                }
+                window.quillPosteo = new Quill('#quill-editor-posteo', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['link'],
+                            ['clean']
+                        ]
+                    }
+                });
+                // Load existing content if editing
+                if (item && item.texto) {
+                    window.quillPosteo.root.innerHTML = item.texto;
+                } else {
+                    window.quillPosteo.root.innerHTML = '';
+                }
+                // Sync to hidden input
+                const syncToHidden = () => {
+                    const hiddenField = document.getElementById('hidden-texto-posteo');
+                    if (hiddenField) {
+                        hiddenField.value = window.quillPosteo.root.innerHTML || '';
+                    }
+                };
+                window.quillPosteo.on('text-change', syncToHidden);
+                syncToHidden();
+            } catch (err) {
+                console.error('Error initializing Quill for posteo:', err);
+                const editor = document.getElementById('quill-editor-posteo');
+                if (editor) {
+                    editor.innerHTML = '<textarea id="fallback-texto-posteo" name="texto" placeholder="Texto del posteo" class="admin-input" style="width: 100%; min-height: 200px;">' +
+                        (item && item.texto ? item.texto : '') +
+                        '</textarea>';
+                }
+            }
+        }, 200);
+
     } else if (entity === 'producto') {
         const token = localStorage.getItem('token');
         fields.innerHTML = `

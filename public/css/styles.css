@@ -389,14 +389,21 @@ body {
 }
 
 /* Cart Page Styles */
-.cart-table {
+.cart-table-wrapper {
   width: 100%;
-  border-collapse: collapse;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   margin-top: 2rem;
   background: var(--surface);
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: var(--shadow-sm);
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
 }
 
 .cart-table th {
