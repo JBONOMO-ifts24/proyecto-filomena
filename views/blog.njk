@@ -60,7 +60,7 @@
                     </div>
                 {% endif %}
 
-                <div style="color: var(--text-main); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2rem; white-space: pre-wrap;">{{ posteo.texto }}</div>
+                    <div style="color: var(--text-main); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2rem; white-space: pre-wrap;">{{ posteo.texto | safe }}</div>
 
                 <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 2rem 0;">
 
