@@ -217,13 +217,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const waVisible = document.getElementById('contact-whatsapp-visible-input').checked ? 'true' : 'false';
             const igUser = document.getElementById('contact-instagram-input').value;
             const igVisible = document.getElementById('contact-instagram-visible-input').checked ? 'true' : 'false';
+            const tgUser = document.getElementById('contact-telegram-input').value;
+            const tgVisible = document.getElementById('contact-telegram-visible-input').checked ? 'true' : 'false';
+            const ttUser = document.getElementById('contact-tiktok-input').value;
+            const ttVisible = document.getElementById('contact-tiktok-visible-input').checked ? 'true' : 'false';
+            const fbUser = document.getElementById('contact-facebook-input').value;
+            const fbVisible = document.getElementById('contact-facebook-visible-input').checked ? 'true' : 'false';
+            const rdUser = document.getElementById('contact-reddit-input').value;
+            const rdVisible = document.getElementById('contact-reddit-visible-input').checked ? 'true' : 'false';
 
             const settings = [
                 { clave: 'mensaje_bienvenida', valor: msgBienvenida, descripcion: 'Mensaje de bienvenida en la página principal' },
                 { clave: 'contact_whatsapp', valor: waNumber, descripcion: 'Número de WhatsApp de contacto' },
                 { clave: 'contact_whatsapp_visible', valor: waVisible, descripcion: 'Visibilidad de WhatsApp en contacto' },
                 { clave: 'contact_instagram', valor: igUser, descripcion: 'Nombre de usuario de Instagram de contacto' },
-                { clave: 'contact_instagram_visible', valor: igVisible, descripcion: 'Visibilidad de Instagram en contacto' }
+                { clave: 'contact_instagram_visible', valor: igVisible, descripcion: 'Visibilidad de Instagram en contacto' },
+                { clave: 'contact_telegram', valor: tgUser, descripcion: 'Nombre de usuario de Telegram de contacto' },
+                { clave: 'contact_telegram_visible', valor: tgVisible, descripcion: 'Visibilidad de Telegram en contacto' },
+                { clave: 'contact_tiktok', valor: ttUser, descripcion: 'Nombre de usuario de TikTok de contacto' },
+                { clave: 'contact_tiktok_visible', valor: ttVisible, descripcion: 'Visibilidad de TikTok en contacto' },
+                { clave: 'contact_facebook', valor: fbUser, descripcion: 'Nombre de usuario/página de Facebook de contacto' },
+                { clave: 'contact_facebook_visible', valor: fbVisible, descripcion: 'Visibilidad de Facebook en contacto' },
+                { clave: 'contact_reddit', valor: rdUser, descripcion: 'Nombre de usuario de Reddit de contacto' },
+                { clave: 'contact_reddit_visible', valor: rdVisible, descripcion: 'Visibilidad de Reddit en contacto' }
             ];
 
             try {

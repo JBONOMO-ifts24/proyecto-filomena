@@ -30,7 +30,7 @@
                     </a></span>
             </div>
             {% endif %}
-            {% if CONTACT_INSTAGRAM_VISIBLE %}
+            {% if CONTACT_INSTAGRAM_VISIBLE and CONTACT_INSTAGRAM %}
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div
                     style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -41,6 +41,54 @@
                 </div>
                 <span style="color: var(--text-main); font-weight: 500;"><a
                         href="https://www.instagram.com/{{ CONTACT_INSTAGRAM }}/#" target="_blank">Instagram</a></span>
+            </div>
+            {% endif %}
+            {% if CONTACT_TELEGRAM_VISIBLE and CONTACT_TELEGRAM %}
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div
+                    style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.89 1.2-5.34 3.53-.5.35-.96.52-1.37.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.36-.49.99-.75 3.88-1.69 6.46-2.8 7.74-3.32 3.69-1.5 4.45-1.76 4.95-1.77.11 0 .36.03.52.16.13.11.17.26.19.37.02.11.02.23-.01.35z"/>
+                    </svg>
+                </div>
+                <span style="color: var(--text-main); font-weight: 500;"><a
+                        href="https://t.me/{{ CONTACT_TELEGRAM }}" target="_blank">Telegram</a></span>
+            </div>
+            {% endif %}
+            {% if CONTACT_TIKTOK_VISIBLE and CONTACT_TIKTOK %}
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div
+                    style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.63 4.16.89.96 2.08 1.55 3.35 1.77v3.74c-1.36-.04-2.71-.4-3.92-1.1-.38-.22-.73-.48-1.05-.78-.04 2.51-.02 5.02-.04 7.53-.06 2.25-.86 4.54-2.5 6.07-1.77 1.71-4.38 2.45-6.79 2.02-2.82-.44-5.37-2.62-6.17-5.42-.93-3.08.17-6.68 2.82-8.52 1.58-1.12 3.55-1.54 5.48-1.22v3.9c-.88-.22-1.85-.09-2.62.43-.98.6-1.54 1.74-1.49 2.89.04 1.26.83 2.44 2.02 2.85 1 .37 2.16.19 2.97-.49.77-.6 1.15-1.57 1.15-2.55-.01-4.14 0-8.28-.01-12.42z"/>
+                    </svg>
+                </div>
+                <span style="color: var(--text-main); font-weight: 500;"><a
+                        href="https://www.tiktok.com/@{{ CONTACT_TIKTOK }}" target="_blank">TikTok</a></span>
+            </div>
+            {% endif %}
+            {% if CONTACT_FACEBOOK_VISIBLE and CONTACT_FACEBOOK %}
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div
+                    style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
+                    </svg>
+                </div>
+                <span style="color: var(--text-main); font-weight: 500;"><a
+                        href="https://www.facebook.com/{{ CONTACT_FACEBOOK }}" target="_blank">Facebook</a></span>
+            </div>
+            {% endif %}
+            {% if CONTACT_REDDIT_VISIBLE and CONTACT_REDDIT %}
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div
+                    style="background: var(--accent-color); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.85-1.64-6.23-1.72l1.37-4.34 4.5 1c.02.83.69 1.5 1.53 1.5 1.1 0 2-.9 2-2s-.9-2-2-2c-.84 0-1.51.67-1.53 1.5l-4.94-1.1c-.27-.06-.54.1-.62.36l-1.6 5.03c-2.42.06-4.66.7-6.33 1.7-.56-.76-1.46-1.24-2.42-1.24-1.65 0-3 1.35-3 3 0 1.2.7 2.23 1.72 2.72-.02.26-.02.52-.02.78 0 3.87 4.48 7 10 7s10-3.13 10-7c0-.26 0-.52-.02-.78 1.02-.49 1.72-1.52 1.72-2.72zm-18 1c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5zm11 4.5c-1.75 1.75-5.07 1.75-6.82 0-.2-.2-.2-.51 0-.71.2-.2.51-.2.71 0 1.36 1.36 4.04 1.36 5.4 0 .2-.2.51-.2.71 0 .2.2.2.51 0 .71zm-1.5-3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5c0 .83-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                </div>
+                <span style="color: var(--text-main); font-weight: 500;"><a
+                        href="https://www.reddit.com/user/{{ CONTACT_REDDIT }}" target="_blank">Reddit</a></span>
             </div>
             {% endif %}
         </div>
