@@ -80,9 +80,13 @@ El sitio web ofrece una experiencia completa para usuarios y administradores. A 
    GOOGLE_CLIENT_ID=tu_google_client_id
    GOOGLE_CLIENT_SECRET=tu_google_client_secret
 
-   # Datos de Contacto (Para que no queden hardcodeados en el repo)
+   # Datos de Contacto (Para que no queden hardcodeados en el repo - Fallbacks opcionales)
    CONTACT_WHATSAPP=tu_numero_de_whatsapp
    CONTACT_INSTAGRAM=tu_usuario_de_instagram
+   CONTACT_TELEGRAM=tu_usuario_de_telegram
+   CONTACT_TIKTOK=tu_usuario_de_tiktok
+   CONTACT_FACEBOOK=tu_usuario_de_facebook
+   CONTACT_REDDIT=tu_usuario_de_reddit
 
    # Sincronización con Google Sheets (Catálogo de Meta)
    DOMAIN=http://localhost:3000
@@ -90,6 +94,21 @@ El sitio web ofrece una experiencia completa para usuarios y administradores. A 
    GOOGLE_SERVICE_ACCOUNT_EMAIL=tu-cuenta-de-servicio@nombre-de-proyecto.iam.gserviceaccount.com
    GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
    ```
+
+### 📱 Configuración de Redes Sociales (Contacto)
+Los canales oficiales de contacto de la tienda se pueden configurar de dos formas:
+
+1. **Panel de Administración (Recomendado):**
+   Accede a `/admin` y dirígete a la pestaña **Config. Site**. Desde allí podrás editar y guardar dinámicamente los usuarios, números y la visibilidad de cada red social. Esto persiste directamente en la base de datos e impacta en tiempo real tanto en la página de **Contacto** como en el envío del pedido vía **WhatsApp** del carrito de compras.
+
+2. **Variables de Entorno (Fallback):**
+   Si la base de datos no contiene registros para una red social, el servidor buscará las variables configuradas en el archivo `.env`:
+   * **WhatsApp:** Solo números con código de país (ej. `5491176XXXXXX`).
+   * **Instagram:** Nombre de usuario (ej. `filomena.arteydiseno`).
+   * **Telegram:** Nombre de usuario (ej. `tu_usuario`).
+   * **TikTok:** Nombre de usuario (ej. `tu_usuario`).
+   * **Facebook:** Nombre de usuario o página (ej. `tu_usuario_o_pagina`).
+   * **Reddit:** Nombre de usuario (ej. `tu_usuario`).
 
 4. Sincroniza la estructura de la base de datos:
    ```bash
