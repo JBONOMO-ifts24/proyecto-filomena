@@ -33,19 +33,45 @@ app.use(async (req, res, next) => {
     const Configuracion = require('./models/Configuracion');
     const dbWhatsapp = await Configuracion.obtener('contact_whatsapp');
     const dbInstagram = await Configuracion.obtener('contact_instagram');
+    const dbTelegram = await Configuracion.obtener('contact_telegram');
+    const dbTiktok = await Configuracion.obtener('contact_tiktok');
+    const dbFacebook = await Configuracion.obtener('contact_facebook');
+    const dbReddit = await Configuracion.obtener('contact_reddit');
+
     const dbWhatsappVisible = await Configuracion.obtener('contact_whatsapp_visible');
     const dbInstagramVisible = await Configuracion.obtener('contact_instagram_visible');
+    const dbTelegramVisible = await Configuracion.obtener('contact_telegram_visible');
+    const dbTiktokVisible = await Configuracion.obtener('contact_tiktok_visible');
+    const dbFacebookVisible = await Configuracion.obtener('contact_facebook_visible');
+    const dbRedditVisible = await Configuracion.obtener('contact_reddit_visible');
 
     res.locals.CONTACT_WHATSAPP = dbWhatsapp !== null ? dbWhatsapp : (process.env.CONTACT_WHATSAPP || '');
     res.locals.CONTACT_INSTAGRAM = dbInstagram !== null ? dbInstagram : (process.env.CONTACT_INSTAGRAM || '');
+    res.locals.CONTACT_TELEGRAM = dbTelegram !== null ? dbTelegram : (process.env.CONTACT_TELEGRAM || '');
+    res.locals.CONTACT_TIKTOK = dbTiktok !== null ? dbTiktok : (process.env.CONTACT_TIKTOK || '');
+    res.locals.CONTACT_FACEBOOK = dbFacebook !== null ? dbFacebook : (process.env.CONTACT_FACEBOOK || '');
+    res.locals.CONTACT_REDDIT = dbReddit !== null ? dbReddit : (process.env.CONTACT_REDDIT || '');
+
     res.locals.CONTACT_WHATSAPP_VISIBLE = dbWhatsappVisible !== null ? dbWhatsappVisible === 'true' : true;
     res.locals.CONTACT_INSTAGRAM_VISIBLE = dbInstagramVisible !== null ? dbInstagramVisible === 'true' : true;
+    res.locals.CONTACT_TELEGRAM_VISIBLE = dbTelegramVisible !== null ? dbTelegramVisible === 'true' : true;
+    res.locals.CONTACT_TIKTOK_VISIBLE = dbTiktokVisible !== null ? dbTiktokVisible === 'true' : true;
+    res.locals.CONTACT_FACEBOOK_VISIBLE = dbFacebookVisible !== null ? dbFacebookVisible === 'true' : true;
+    res.locals.CONTACT_REDDIT_VISIBLE = dbRedditVisible !== null ? dbRedditVisible === 'true' : true;
   } catch (error) {
     console.error('Error cargando configuraciones dinámicas:', error);
     res.locals.CONTACT_WHATSAPP = process.env.CONTACT_WHATSAPP || '';
     res.locals.CONTACT_INSTAGRAM = process.env.CONTACT_INSTAGRAM || '';
+    res.locals.CONTACT_TELEGRAM = process.env.CONTACT_TELEGRAM || '';
+    res.locals.CONTACT_TIKTOK = process.env.CONTACT_TIKTOK || '';
+    res.locals.CONTACT_FACEBOOK = process.env.CONTACT_FACEBOOK || '';
+    res.locals.CONTACT_REDDIT = process.env.CONTACT_REDDIT || '';
     res.locals.CONTACT_WHATSAPP_VISIBLE = true;
     res.locals.CONTACT_INSTAGRAM_VISIBLE = true;
+    res.locals.CONTACT_TELEGRAM_VISIBLE = true;
+    res.locals.CONTACT_TIKTOK_VISIBLE = true;
+    res.locals.CONTACT_FACEBOOK_VISIBLE = true;
+    res.locals.CONTACT_REDDIT_VISIBLE = true;
   }
   next();
 });

@@ -6,66 +6,186 @@
 <div style="margin-top: 2rem;">
     <h1 style="color: var(--primary-color); font-size: 2.5rem; text-align: center; margin-bottom: 2.5rem;">Nuestro Catálogo</h1>
 
+    <!-- Buscador Premium de Productos -->
+    <div class="search-container" style="max-width: 600px; margin: 0 auto 3rem auto; position: relative;">
+        <div style="position: relative; background: var(--surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 2px solid var(--glass-border); border-radius: 50px; padding: 4px 8px; display: flex; align-items: center; box-shadow: var(--shadow-md); transition: all 0.3s ease;" id="search-box-wrapper">
+            <span style="font-size: 1.2rem; margin-left: 12px; color: var(--text-light); display: flex; align-items: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-light);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </span>
+            <input type="text" id="catalogo-search" placeholder="Buscar por producto, modelo o categoría..." style="width: 100%; border: none; background: transparent; padding: 10px 15px; font-size: 1rem; color: var(--text-main); font-family: var(--font-base); outline: none;">
+            <button id="clear-search" style="display: none; background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1.5rem; padding: 0 15px; align-items: center; justify-content: center; height: 100%; line-height: 1;" title="Limpiar búsqueda">&times;</button>
+        </div>
+    </div>
+
+    <!-- Mensaje sin resultados -->
+    <div id="no-results" style="display: none; text-align: center; margin: 4rem auto; max-width: 500px; padding: 2rem; background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: var(--shadow-md); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: fadeIn 0.5s ease;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+        <h3 style="color: var(--primary-color); font-size: 1.3rem; margin-bottom: 0.5rem; font-weight: 700;">No se encontraron resultados</h3>
+        <p style="color: var(--text-light); font-size: 0.95rem;">Intenta buscar con palabras clave diferentes o revisa la ortografía.</p>
+    </div>
+
     {% if categorias.length == 0 %}
         <p style="text-align: center; color: var(--text-light); font-size: 1.1rem;">Aún no hay categorías disponibles en la tienda.</p>
     {% else %}
-        {% for categoria in categorias %}
-            <div style="margin-bottom: 4rem;">
-                <h2 style="color: var(--accent-color); font-size: 2rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
-                    {{ categoria.nombre }}
-                    <span style="font-size: 1rem; color: var(--text-light); font-weight: normal; margin-left: 10px;">({{ categoria.descripcion }})</span>
-                </h2>
+        <div id="categorias-container">
+            {% for categoria in categorias %}
+                <div class="categoria-block" data-categoria-nombre="{{ categoria.nombre | lower }}" style="margin-bottom: 4rem; transition: all 0.4s ease;">
+                    <h2 style="color: var(--accent-color); font-size: 2rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                        {{ categoria.nombre }}
+                        <span style="font-size: 1rem; color: var(--text-light); font-weight: normal; margin-left: 10px;">({{ categoria.descripcion }})</span>
+                    </h2>
 
-                {% if categoria.modelos.length == 0 %}
-                    <p style="color: var(--text-light); font-style: italic;">No hay modelos para esta categoría.</p>
-                {% else %}
-                    {% for modelo in categoria.modelos %}
-                        <div style="margin-bottom: 2.5rem; padding-left: 1rem; border-left: 4px solid var(--glass-border);">
-                            <h3 style="color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1rem;">
-                                {{ modelo.nombre }} 
-                            </h3>
-                            
-                            {% if modelo.productos.length == 0 %}
-                                <p style="color: var(--text-light); font-style: italic; margin-left: 1rem;">Próximamente productos para este modelo.</p>
-                            {% else %}
-                <div class="grid-auto-fill" style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
-                                    {% for producto in modelo.productos %}
-                                        <a href="/producto/{{ producto.id }}" style="text-decoration: none; color: inherit;">
-                                            <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 220px; overflow: hidden; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                                                <!-- Imagen Principal del Producto -->
-                                                <div style="height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                                                    {% set imagenPrincipal = null %}
-                                                    {% for img in producto.imagenes %}
-                                                        {% if img.es_principal %}
-                                                            {% set imagenPrincipal = img %}
+                    {% if categoria.modelos.length == 0 %}
+                        <p style="color: var(--text-light); font-style: italic;">No hay modelos para esta categoría.</p>
+                    {% else %}
+                        {% for modelo in categoria.modelos %}
+                            <div class="modelo-block" data-modelo-nombre="{{ modelo.nombre | lower }}" style="margin-bottom: 2.5rem; padding-left: 1rem; border-left: 4px solid var(--glass-border); transition: all 0.4s ease;">
+                                <h3 style="color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1rem;">
+                                    {{ modelo.nombre }} 
+                                </h3>
+                                
+                                {% if modelo.productos.length == 0 %}
+                                    <p style="color: var(--text-light); font-style: italic; margin-left: 1rem;">Próximamente productos para este modelo.</p>
+                                {% else %}
+                                    <div class="grid-auto-fill" style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-left: 1rem;">
+                                        {% for producto in modelo.productos %}
+                                            <a href="/producto/{{ producto.id }}" class="producto-card-link" data-producto-nombre="{{ producto.nombre | lower }}" style="text-decoration: none; color: inherit; transition: all 0.3s ease;">
+                                                <div class="producto-card" style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 220px; overflow: hidden; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                                    <!-- Imagen Principal del Producto -->
+                                                    <div style="height: 180px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                                        {% set imagenPrincipal = null %}
+                                                        {% for img in producto.imagenes %}
+                                                            {% if img.es_principal %}
+                                                                {% set imagenPrincipal = img %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                        {% if not imagenPrincipal and producto.imagenes.length > 0 %}
+                                                            {% set imagenPrincipal = producto.imagenes[0] %}
                                                         {% endif %}
-                                                    {% endfor %}
-                                                    
-                                                    {% if not imagenPrincipal and producto.imagenes.length > 0 %}
-                                                        {% set imagenPrincipal = producto.imagenes[0] %}
-                                                    {% endif %}
 
-                                                    {% if imagenPrincipal %}
-                                                        <img src="{{ imagenPrincipal.url }}" alt="{{ producto.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                    {% else %}
-                                                        <span style="color: #999;">Sin imagen</span>
-                                                    {% endif %}
+                                                        {% if imagenPrincipal %}
+                                                            <img src="{{ imagenPrincipal.url }}" alt="{{ producto.nombre }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                        {% else %}
+                                                            <span style="color: #999;">Sin imagen</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                    <!-- Nombre del Producto -->
+                                                    <div style="padding: 1rem; text-align: center;">
+                                                        <h4 style="color: var(--primary-color); font-size: 1.1rem; margin: 0; font-weight: 600;">{{ producto.nombre }}</h4>
+                                                    </div>
                                                 </div>
-                                                
-                                                <!-- Nombre del Producto -->
-                                                <div style="padding: 1rem; text-align: center;">
-                                                    <h4 style="color: var(--primary-color); font-size: 1.1rem; margin: 0; font-weight: 600;">{{ producto.nombre }}</h4>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        {% endfor %}
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
 </div>
+
+<!-- Script del Buscador Interactivo -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('catalogo-search');
+        const clearBtn = document.getElementById('clear-search');
+        const searchWrapper = document.getElementById('search-box-wrapper');
+        const categoriaBlocks = document.querySelectorAll('.categoria-block');
+        const noResults = document.getElementById('no-results');
+
+        // Efectos visuales de enfoque
+        searchInput.addEventListener('focus', () => {
+            searchWrapper.style.borderColor = 'var(--accent-color)';
+            searchWrapper.style.boxShadow = '0 0 15px rgba(191, 67, 216, 0.25)';
+        });
+
+        searchInput.addEventListener('blur', () => {
+            searchWrapper.style.borderColor = 'var(--glass-border)';
+            searchWrapper.style.boxShadow = 'var(--shadow-md)';
+        });
+
+        // Función para normalizar texto (quitar acentos/diacríticos y pasar a minúsculas)
+        const normalizarTexto = (texto) => {
+            return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        };
+
+        // Filtrado dinámico
+        searchInput.addEventListener('input', () => {
+            const query = normalizarTexto(searchInput.value.trim());
+            
+            // Mostrar u ocultar botón de limpiar
+            if (query.length > 0) {
+                clearBtn.style.display = 'flex';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            let totalVisibleProducts = 0;
+
+            categoriaBlocks.forEach(categoriaBlock => {
+                const categoriaNombre = normalizarTexto(categoriaBlock.getAttribute('data-categoria-nombre') || '');
+                const modeloBlocks = categoriaBlock.querySelectorAll('.modelo-block');
+                let catMatches = categoriaNombre.includes(query);
+                let visibleModelosInCat = 0;
+
+                modeloBlocks.forEach(modeloBlock => {
+                    const modeloNombre = normalizarTexto(modeloBlock.getAttribute('data-modelo-nombre') || '');
+                    const productLinks = modeloBlock.querySelectorAll('.producto-card-link');
+                    let modMatches = modeloNombre.includes(query);
+                    let visibleProductsInModel = 0;
+
+                    productLinks.forEach(productLink => {
+                        const productoNombre = normalizarTexto(productLink.getAttribute('data-producto-nombre') || '');
+                        
+                        // El producto coincide si el nombre del producto, el modelo o la categoría coincide con el query
+                        const prodMatches = productoNombre.includes(query);
+                        const isMatch = prodMatches || modMatches || catMatches;
+
+                        if (isMatch) {
+                            productLink.style.display = '';
+                            visibleProductsInModel++;
+                            totalVisibleProducts++;
+                        } else {
+                            productLink.style.display = 'none';
+                        }
+                    });
+
+                    // Mostrar u ocultar modelo según si tiene productos visibles
+                    if (visibleProductsInModel > 0) {
+                        modeloBlock.style.display = '';
+                        visibleModelosInCat++;
+                    } else {
+                        modeloBlock.style.display = 'none';
+                    }
+                });
+
+                // Mostrar u ocultar categoría según si tiene modelos visibles
+                if (visibleModelosInCat > 0) {
+                    categoriaBlock.style.display = '';
+                } else {
+                    categoriaBlock.style.display = 'none';
+                }
+            });
+
+            // Mostrar u ocultar mensaje de "sin resultados"
+            if (totalVisibleProducts === 0 && query.length > 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+
+        // Botón limpiar
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.focus();
+            searchInput.dispatchEvent(new Event('input'));
+        });
+    });
+</script>
 {% endblock %}

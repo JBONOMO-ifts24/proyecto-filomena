@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminForm) {
         adminForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             // Validar tamaño de imágenes en el cliente (Máx. 2MB)
             const fileInputs = adminForm.querySelectorAll('input[type="file"]');
             for (const input of fileInputs) {
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            
+
             // Capturar contenido de Quill si está disponible
             const hiddenDescripcion = document.getElementById('hidden-descripcion');
             const fallbackDescripcion = document.getElementById('fallback-descripcion');
-            
+
             if (window.quillInstance && hiddenDescripcion) {
                 // Si Quill está inicializado, capturar su contenido
                 hiddenDescripcion.value = window.quillInstance.root.innerHTML || '';
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hiddenDescripcion.value = fallbackDescripcion.value;
                 console.log('✓ Descripción capturada desde fallback textarea');
             }
-            
+
             const formData = new FormData(adminForm);
             const data = Object.fromEntries(formData.entries());
             const entity = adminForm.getAttribute('data-entity');
@@ -204,31 +204,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lógica de formulario de Página de Inicio
+    // Lógica de formulario de Config. Site
     const formInicio = document.getElementById('form-inicio');
     if (formInicio) {
         formInicio.addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = localStorage.getItem('token');
             const messageDiv = document.getElementById('inicio-message');
-            
+
             const msgBienvenida = document.getElementById('mensaje-bienvenida-input').value;
             const waNumber = document.getElementById('contact-whatsapp-input').value;
             const waVisible = document.getElementById('contact-whatsapp-visible-input').checked ? 'true' : 'false';
             const igUser = document.getElementById('contact-instagram-input').value;
             const igVisible = document.getElementById('contact-instagram-visible-input').checked ? 'true' : 'false';
+            const tgUser = document.getElementById('contact-telegram-input').value;
+            const tgVisible = document.getElementById('contact-telegram-visible-input').checked ? 'true' : 'false';
+            const ttUser = document.getElementById('contact-tiktok-input').value;
+            const ttVisible = document.getElementById('contact-tiktok-visible-input').checked ? 'true' : 'false';
+            const fbUser = document.getElementById('contact-facebook-input').value;
+            const fbVisible = document.getElementById('contact-facebook-visible-input').checked ? 'true' : 'false';
+            const rdUser = document.getElementById('contact-reddit-input').value;
+            const rdVisible = document.getElementById('contact-reddit-visible-input').checked ? 'true' : 'false';
 
             const settings = [
                 { clave: 'mensaje_bienvenida', valor: msgBienvenida, descripcion: 'Mensaje de bienvenida en la página principal' },
                 { clave: 'contact_whatsapp', valor: waNumber, descripcion: 'Número de WhatsApp de contacto' },
                 { clave: 'contact_whatsapp_visible', valor: waVisible, descripcion: 'Visibilidad de WhatsApp en contacto' },
                 { clave: 'contact_instagram', valor: igUser, descripcion: 'Nombre de usuario de Instagram de contacto' },
-                { clave: 'contact_instagram_visible', valor: igVisible, descripcion: 'Visibilidad de Instagram en contacto' }
+                { clave: 'contact_instagram_visible', valor: igVisible, descripcion: 'Visibilidad de Instagram en contacto' },
+                { clave: 'contact_telegram', valor: tgUser, descripcion: 'Nombre de usuario de Telegram de contacto' },
+                { clave: 'contact_telegram_visible', valor: tgVisible, descripcion: 'Visibilidad de Telegram en contacto' },
+                { clave: 'contact_tiktok', valor: ttUser, descripcion: 'Nombre de usuario de TikTok de contacto' },
+                { clave: 'contact_tiktok_visible', valor: ttVisible, descripcion: 'Visibilidad de TikTok en contacto' },
+                { clave: 'contact_facebook', valor: fbUser, descripcion: 'Nombre de usuario/página de Facebook de contacto' },
+                { clave: 'contact_facebook_visible', valor: fbVisible, descripcion: 'Visibilidad de Facebook en contacto' },
+                { clave: 'contact_reddit', valor: rdUser, descripcion: 'Nombre de usuario de Reddit de contacto' },
+                { clave: 'contact_reddit_visible', valor: rdVisible, descripcion: 'Visibilidad de Reddit en contacto' }
             ];
 
             try {
                 // Guardar todas las configuraciones en paralelo
-                const promises = settings.map(setting => 
+                const promises = settings.map(setting =>
                     fetch('/api/configuraciones', {
                         method: 'POST',
                         headers: {
@@ -281,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Función para cargar datos según la pestaña activa
 async function loadData(entity) {
     const token = localStorage.getItem('token');
-    
+
     // Manejo especial para la pestaña de Página de Inicio
     if (entity === 'inicio') {
         try {
@@ -316,7 +332,7 @@ async function loadData(entity) {
         }
         return;
     }
-    
+
     // Mapeo de nombres de pestaña a endpoints reales de la API
     const apiPathMap = { modelos: 'modeloproductos', tipos: 'tipoproductos' };
     const apiPath = apiPathMap[entity] || entity;
@@ -556,7 +572,7 @@ function openModal(entity, item = null) {
 
     title.innerText = item ? `Editar ${entity}` : `Agregar ${entity}`;
     fields.innerHTML = '';
-    
+
     // Limpiar instancia anterior de Quill si existe
     if (window.quillInstance) {
         window.quillInstance = null;
@@ -624,7 +640,7 @@ function openModal(entity, item = null) {
                         toolbar: [
                             ['bold', 'italic', 'underline'],
                             ['blockquote', 'code-block'],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                             [{ 'header': [1, 2, 3, false] }],
                             ['link'],
                             ['clean']
@@ -674,7 +690,7 @@ function openModal(entity, item = null) {
             <input type="file" name="imagenes" class="admin-input" multiple accept="image/*">
             <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">Si seleccionas nuevas, se reemplazarán las anteriores.</small>
         `;
-        
+
         // Inicializar Quill para la descripción con pequeño delay
         setTimeout(() => {
             // Verificar que Quill esté disponible
@@ -683,8 +699,8 @@ function openModal(entity, item = null) {
                 // Fallback: crear un textarea simple
                 const editor = document.getElementById('quill-editor');
                 if (editor) {
-                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' + 
-                        (item && item.descripcion ? item.descripcion : '') + 
+                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' +
+                        (item && item.descripcion ? item.descripcion : '') +
                         '</textarea>';
                 }
                 return;
@@ -694,33 +710,33 @@ function openModal(entity, item = null) {
                 // Destruir instancia anterior si existe
                 const editorDiv = document.getElementById('quill-editor');
                 if (!editorDiv) return;
-                
+
                 // Limpiar cualquier editor anterior
                 if (window.quillInstance) {
                     window.quillInstance = null;
                 }
-                
+
                 window.quillInstance = new Quill('#quill-editor', {
                     theme: 'snow',
                     modules: {
                         toolbar: [
                             ['bold', 'italic', 'underline'],
                             ['blockquote', 'code-block'],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                             [{ 'header': [1, 2, 3, false] }],
                             ['link'],
                             ['clean']
                         ]
                     }
                 });
-                
+
                 // Cargar contenido anterior si es edición
                 if (item && item.descripcion) {
                     window.quillInstance.root.innerHTML = item.descripcion;
                 } else {
                     window.quillInstance.root.innerHTML = '';
                 }
-                
+
                 // Sincronizar con el campo oculto
                 const syncToHidden = () => {
                     const hiddenField = document.getElementById('hidden-descripcion');
@@ -728,26 +744,26 @@ function openModal(entity, item = null) {
                         hiddenField.value = window.quillInstance.root.innerHTML || '';
                     }
                 };
-                
+
                 // Guardar en el campo oculto al escribir
                 window.quillInstance.on('text-change', syncToHidden);
-                
+
                 // Sincronizar inicial
                 syncToHidden();
-                
+
                 console.log('✓ Quill inicializado correctamente');
             } catch (err) {
                 console.error('Error al inicializar Quill:', err);
                 // Si falla, mostrar textarea alternativo
                 const editor = document.getElementById('quill-editor');
                 if (editor) {
-                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' + 
-                        (item && item.descripcion ? item.descripcion : '') + 
+                    editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' +
+                        (item && item.descripcion ? item.descripcion : '') +
                         '</textarea>';
                 }
             }
         }, 200);
-        
+
         fetch('/api/modeloproductos', { headers: { 'Authorization': `Bearer ${token}` } })
             .then(r => r.json())
             .then(modelos => {
@@ -898,12 +914,12 @@ async function descargarStock() {
 async function descargarCatalogo() {
     const token = localStorage.getItem('token');
     const statusEl = document.getElementById('catalogo-status');
-    
+
     try {
         // Mostrar estado de descarga
         statusEl.textContent = '📦 Preparando descarga...';
         statusEl.style.display = 'flex';
-        
+
         const response = await fetch('/api/admin/catalogo/exportar-zip', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -928,7 +944,7 @@ async function descargarCatalogo() {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            
+
             statusEl.textContent = '✅ Descarga completada';
             statusEl.style.color = '#2e7d32';
             setTimeout(() => {
