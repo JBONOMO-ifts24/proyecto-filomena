@@ -20,7 +20,7 @@ Página web y API para emprendimiento dedicado al arte, diseño y la encuadernac
   - Interfaz dinámica con contador en la barra de navegación y gestión de cantidades desde la vista de carrito.
 - **Pedidos vía WhatsApp:** Integración directa que genera un mensaje detallado con el pedido (productos, cantidades y totales) y redirige al WhatsApp oficial para concretar la venta.
 - **Gestión de Contenidos:**
-  - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos.
+  - **Catálogo:** Visualización jerárquica de productos agrupados por categorías y modelos. Funcionalidad de búsqueda por nombre de producto, modelo o categoría.
   - **Eventos:** Gestión y visualización de ferias y talleres (con integración a Google Maps).
   - **Blog/Posteos:** Sistema de publicaciones del administrador con capacidad de comentarios. Los usuarios pueden **editar y borrar** sus propios comentarios. Cada posteo admite **hasta 3 imágenes en carrusel** y **videos de YouTube embebidos**.
   - **Muro de Mensajes:** Página de contacto con muro público donde cualquier usuario (invitado o registrado) puede participar.
