@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const dashboard = document.getElementById('admin-dashboard');
@@ -359,7 +358,10 @@ function renderTable(entity, data) {
     const tbody = document.getElementById(`${entity}-table-body`);
     tbody.innerHTML = '';
 
+    window._itemsCache = window._itemsCache || {};
+
     data.forEach(item => {
+        window._itemsCache[`${entity}_${item.id}`] = item;
         let row = '<tr>';
         if (entity === 'productos') {
             const precioStr = item.precio ? `$${item.precio}` : '-';
@@ -415,7 +417,7 @@ function renderTable(entity, data) {
 
         let actions = `
             <td style="padding: 1rem; text-align: right;">
-                <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', window._itemsCache['${entity}_${item.id}'])">Editar</button>
                 <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
             </td>
         `;
@@ -423,7 +425,7 @@ function renderTable(entity, data) {
         if (entity === 'productos') {
             actions = `
                 <td style="padding: 1rem; text-align: right;">
-                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', window._itemsCache['${entity}_${item.id}'])">Editar</button>
                     <button class="btn-action btn-duplicate" onclick="duplicateItem('${entity}', ${item.id})" title="Duplicar producto">Duplicar</button>
                     <button class="btn-action" style="background: ${item.visible ? '#ff9800' : '#4caf50'}; color: white;" onclick="toggleVisible(${item.id}, ${item.visible})">${item.visible ? 'Ocultar' : 'Mostrar'}</button>
                     <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
@@ -432,7 +434,7 @@ function renderTable(entity, data) {
         } else if (entity === 'usuarios') {
             actions = `
                 <td style="padding: 1rem; text-align: right;">
-                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">Editar</button>
+                    <button class="btn-action btn-edit" onclick="openModal('${singularEntity}', window._itemsCache['${entity}_${item.id}'])">Editar</button>
                     <button class="btn-action" style="background: ${item.suspendido ? '#4caf50' : '#ff9800'}; color: white;" onclick="toggleUserStatus(${item.id})">${item.suspendido ? 'Activar' : 'Suspender'}</button>
                     <button class="btn-action btn-delete" onclick="deleteItem('${entity}', ${item.id})">Eliminar</button>
                 </td>
