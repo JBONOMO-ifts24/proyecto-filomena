@@ -3,6 +3,10 @@ const nunjucks = require('nunjucks');
 const path = require('path');
 const multer = require('multer');
 const dayjs = require('dayjs');
+const dayjsUtc = require('dayjs/plugin/utc');
+const dayjsTimezone = require('dayjs/plugin/timezone');
+dayjs.extend(dayjsUtc);
+dayjs.extend(dayjsTimezone);
 const sequelize = require('./db/sequelize');
 const passport = require('./config/passport');
 
@@ -17,7 +21,7 @@ const env = nunjucks.configure('views', {
 });
 
 env.addFilter('date', (date, format) => {
-  return dayjs(date).format(format);
+  return dayjs(date).tz('America/Argentina/Buenos_Aires').format(format);
 });
 
 env.addFilter('pesosAR', (valor) => {
