@@ -1,168 +1,193 @@
 {% extends "layout.njk" %}
-
 {% block title %}Blog - Filomena Arte y Diseño{% endblock %}
-
 {% block content %}
-<div style="max-width: 800px; margin: 2rem auto;">
-    <h1 style="color: var(--primary-color); font-size: 2.5rem; text-align: center; margin-bottom: 3rem;">Novedades y Posteos</h1>
-
-    {% if posteos.length == 0 %}
-        <p style="text-align: center; color: var(--text-light);">No hay publicaciones todavía.</p>
-    {% else %}
-        {% for posteo in posteos %}
-            <article style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2.5rem; margin-bottom: 3rem; box-shadow: var(--shadow-md); backdrop-filter: blur(10px);">
-                <header style="margin-bottom: 1.5rem;">
-                    <h2 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 0.5rem;">{{ posteo.titulo }}</h2>
-                    <div style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">
-                        Por {{ posteo.autor.nombre }} {{ posteo.autor.apellido }} <span style="color: var(--accent-color);">(@{{ posteo.autor.nombreUsuario }})</span> • <span class="local-datetime" data-utc="{{ posteo.createdAt | isoDate }}"></span>
-                    </div>
-                </header>
-
-                {% set mediaItems = [] %}
-                {% if posteo.imagenes and posteo.imagenes.length > 0 %}
-                    {% set mediaItems = posteo.imagenes %}
-                {% elif posteo.imagen %}
-                    {% set mediaItems = [posteo.imagen] %}
-                {% endif %}
-
-                {% if mediaItems.length > 0 or posteo.youtube_url %}
-                    <div style="margin-bottom: 1.5rem;">
-                        {% if mediaItems.length > 0 %}
-                            <div style="background: rgba(255,255,255,0.14); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid rgba(255,255,255,0.18);">
-                                <div id="post-carousel-{{ posteo.id }}" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;">
-                                    {% for media in mediaItems %}
-                                        <div style="min-width: 100%; scroll-snap-align: start;">
-                                            <img src="{{ media }}" alt="{{ posteo.titulo }} - imagen {{ loop.index }}" style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block;">
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                                {% if mediaItems.length > 1 %}
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; gap: 1rem; background: rgba(24, 24, 24, 0.65);">
-                                        <div style="display: flex; gap: 0.35rem; align-items: center;">
-                                            {% for media in mediaItems %}
-                                                <span style="width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.35); display: inline-block;"></span>
+    <div style="max-width: 800px; margin: 2rem auto;">
+        <h1 style="color: var(--primary-color); font-size: 2.5rem; text-align: center; margin-bottom: 3rem;">Novedades y Posteos</h1>
+        {% if posteos.length == 0 %}
+            <p style="text-align: center; color: var(--text-light);">No hay publicaciones todavía.</p>
+        {% else %}
+            {% for posteo in posteos %}
+                <article style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2.5rem;
+                        margin-bottom: 3rem; box-shadow: var(--shadow-md); backdrop-filter: blur(10px);">
+                    <header style="margin-bottom: 1.5rem;">
+                        <h2 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 0.5rem;">{{ posteo.titulo }}</h2>
+                        <div style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">
+                            Por {{ posteo.autor.nombre }}
+                            {{ posteo.autor.apellido }}
+                            <span style="color: var(--accent-color);">(@{{ posteo.autor.nombreUsuario }})</span>
+                            •
+                            <span class="local-datetime" data-utc="{{ posteo.createdAt | isoDate }}"></span>
+                        </div>
+                    </header>
+                    {% set mediaItems = [] %}
+                    {% if posteo.imagenes and posteo.imagenes.length > 0 %}
+                        {% set mediaItems = posteo.imagenes %}
+                    {% endif %}
+                    {% if mediaItems.length > 0 or posteo.youtube_url %}
+                        <div style="margin-bottom: 1.5rem;">
+                            {% if mediaItems.length > 0 %}
+                                <div style="background: rgba(255,255,255,0.14); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); border:
+                                        1px solid rgba(255,255,255,0.18);">
+                                    <div
+                                        id="post-carousel-{{ posteo.id }}"
+                                        style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;">
+                                        {% for media in mediaItems %}
+                                            <div style="min-width: 100%; scroll-snap-align: start;">
+                                                <img src="{{ media }}" alt="{{ posteo.titulo }} - imagen {{ loop.index }}" style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block;"></div>
                                             {% endfor %}
                                         </div>
-                                        <div style="display: flex; gap: 0.5rem;">
-                                            <button type="button" onclick="document.getElementById('post-carousel-{{ posteo.id }}').scrollBy({left: -document.getElementById('post-carousel-{{ posteo.id }}').clientWidth, behavior: 'smooth'})" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: white; border-radius: 999px; width: 2rem; height: 2rem; cursor: pointer; font-size: 1rem;">‹</button>
-                                            <button type="button" onclick="document.getElementById('post-carousel-{{ posteo.id }}').scrollBy({left: document.getElementById('post-carousel-{{ posteo.id }}').clientWidth, behavior: 'smooth'})" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: white; border-radius: 999px; width: 2rem; height: 2rem; cursor: pointer; font-size: 1rem;">›</button>
-                                        </div>
+                                        {% if mediaItems.length > 1 %}
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; gap: 1rem; background:
+                                                    rgba(24, 24, 24, 0.65);">
+                                                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                                                    {% for media in mediaItems %}
+                                                        <span style="width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.35); display: inline-block;"></span>
+                                                    {% endfor %}
+                                                </div>
+                                                <div style="display: flex; gap: 0.5rem;">
+                                                    <button
+                                                        type="button"
+                                                        onclick="document.getElementById('post-carousel-{{ posteo.id }}').scrollBy({left:
+                                                            -document.getElementById('post-carousel-{{ posteo.id }}').clientWidth, behavior: 'smooth'})"
+                                                        style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: white; border-radius: 999px;
+                                                            width: 2rem; height: 2rem; cursor: pointer; font-size: 1rem;">
+                                                    ‹</button>
+                                                    <button
+                                                        type="button"
+                                                        onclick="document.getElementById('post-carousel-{{ posteo.id }}').scrollBy({left:
+                                                            document.getElementById('post-carousel-{{ posteo.id }}').clientWidth, behavior: 'smooth'})"
+                                                        style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: white; border-radius: 999px;
+                                                            width: 2rem; height: 2rem; cursor: pointer; font-size: 1rem;">
+                                                    ›</button>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                {% if posteo.youtube_url %}
+                                    <div style="margin-top: 1rem; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); aspect-ratio: 16 / 9;
+                                            background: #000; border: 1px solid rgba(255,255,255,0.18);">
+                                        <iframe src="{{ posteo.youtube_url }}" title="Video de YouTube" style="width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                                     </div>
                                 {% endif %}
                             </div>
                         {% endif %}
-
-                        {% if posteo.youtube_url %}
-                            <div style="margin-top: 1rem; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); aspect-ratio: 16 / 9; background: #000; border: 1px solid rgba(255,255,255,0.18);">
-                                <iframe src="{{ posteo.youtube_url }}" title="Video de YouTube" style="width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                            </div>
-                        {% endif %}
-                    </div>
+                        <div style="color: var(--text-main); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2rem; white-space: pre-wrap;">{{ posteo.texto | safe }}</div>
+                        <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 2rem 0;">
+                            <section>
+                                <h3 style="color: var(--accent-color); font-size: 1.3rem; margin-bottom: 1.5rem;">Comentarios ({{ posteo.comentarios.length }})</h3>
+                                <div id="comments-list-{{ posteo.id }}">
+                                    {% for comentario in posteo.comentarios %}
+                                        <div style="background: rgba(255,255,255,0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; border: 1px
+                                                solid rgba(255,255,255,0.2);">
+                                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
+                                                    {{ comentario.autor.nombre }}
+                                                    {{ comentario.autor.apellido }}
+                                                    <span style="font-weight: normal; color: var(--accent-color);">(@{{ comentario.autor.nombreUsuario }})</span>
+                                                    <span class="local-datetime" data-utc="{{ comentario.createdAt | isoDate }}" style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;"></span>
+                                                </div>
+                                                <div class="comment-actions" style="display: none;" data-comentario-id="{{ comentario.id }}" data-autor-id="{{ comentario.autor.id }}">
+                                                    <button
+                                                        class="btn-comment-edit"
+                                                        style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0 5px;">
+                                                    Editar</button>
+                                                    <button
+                                                        class="btn-comment-delete"
+                                                        style="background: none; border: none; color: #ff4444; font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Borrar</button>
+                                                </div>
+                                            </div>
+                                            <p class="comment-text" style="margin: 0; color: var(--text-main); font-size: 1rem;">{{ comentario.texto }}</p>
+                                            <div class="edit-comment-form" style="display: none; margin-top: 0.5rem;">
+                                                <textarea style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background:
+                                                    var(--surface); color: var(--text-main); font-family: inherit; margin-bottom: 0.5rem; min-height: 60px;">{{ comentario.texto }}</textarea>
+                                                <div style="display: flex; gap: 0.5rem;">
+                                                    <button
+                                                        class="btn-comment-save"
+                                                        style="background: var(--primary-color); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size:
+                                                            0.8rem; cursor: pointer;">
+                                                    Guardar</button>
+                                                    <button
+                                                        class="btn-comment-cancel"
+                                                        style="background: var(--text-light); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size:
+                                                            0.8rem; cursor: pointer;">
+                                                    Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- Formulario de comentario (Solo visible si está logueado, manejado por auth.js) -->
+                                <div class="comment-form-container" style="display: none; margin-top: 2rem;" data-post-id="{{ posteo.id }}">
+                                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Deja un comentario</h4>
+                                    <form class="comment-form" onsubmit="return false;">
+                                        <textarea
+                                            placeholder="Escribe tu comentario aquí..."
+                                            required
+                                            style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border); background:
+                                                var(--surface); color: var(--text-main); font-family: inherit; margin-bottom: 1rem; min-height: 100px; resize: vertical;"></textarea>
+                                        <button type="submit" class="btn-primary">Enviar comentario</button>
+                                    </form>
+                                </div>
+                                <div class="login-prompt" style="margin-top: 2rem; text-align: center; color: var(--text-light); font-size: 0.95rem;">
+                                    <a href="/login" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Inicia sesión</a>
+                                    para comentar.
+                                </div>
+                            </section>
+                        </article>
+                    {% endfor %}
                 {% endif %}
-
-                    <div style="color: var(--text-main); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2rem; white-space: pre-wrap;">{{ posteo.texto | safe }}</div>
-
-                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 2rem 0;">
-
-                <section>
-                    <h3 style="color: var(--accent-color); font-size: 1.3rem; margin-bottom: 1.5rem;">Comentarios ({{ posteo.comentarios.length }})</h3>
-                    
-                    <div id="comments-list-{{ posteo.id }}">
-                        {% for comentario in posteo.comentarios %}
-                            <div style="background: rgba(255,255,255,0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
-                                        {{ comentario.autor.nombre }} {{ comentario.autor.apellido }} <span style="font-weight: normal; color: var(--accent-color);">(@{{ comentario.autor.nombreUsuario }})</span>
-                                        <span class="local-datetime" data-utc="{{ comentario.createdAt | isoDate }}" style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;"></span>
-                                    </div>
-                                    <div class="comment-actions" style="display: none;" data-comentario-id="{{ comentario.id }}" data-autor-id="{{ comentario.autor.id }}">
-                                        <button class="btn-comment-edit" style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Editar</button>
-                                        <button class="btn-comment-delete" style="background: none; border: none; color: #ff4444; font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Borrar</button>
-                                    </div>
-                                </div>
-                                <p class="comment-text" style="margin: 0; color: var(--text-main); font-size: 1rem;">{{ comentario.texto }}</p>
-                                <div class="edit-comment-form" style="display: none; margin-top: 0.5rem;">
-                                    <textarea style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--surface); color: var(--text-main); font-family: inherit; margin-bottom: 0.5rem; min-height: 60px;">{{ comentario.texto }}</textarea>
-                                    <div style="display: flex; gap: 0.5rem;">
-                                        <button class="btn-comment-save" style="background: var(--primary-color); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Guardar</button>
-                                        <button class="btn-comment-cancel" style="background: var(--text-light); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">Cancelar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Formulario de comentario (Solo visible si está logueado, manejado por auth.js) -->
-                    <div class="comment-form-container" style="display: none; margin-top: 2rem;" data-post-id="{{ posteo.id }}">
-                        <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Deja un comentario</h4>
-                        <form class="comment-form" onsubmit="return false;">
-                            <textarea placeholder="Escribe tu comentario aquí..." required style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--surface); color: var(--text-main); font-family: inherit; margin-bottom: 1rem; min-height: 100px; resize: vertical;"></textarea>
-                            <button type="submit" class="btn-primary">Enviar comentario</button>
-                        </form>
-                    </div>
-
-                    <div class="login-prompt" style="margin-top: 2rem; text-align: center; color: var(--text-light); font-size: 0.95rem;">
-                        <a href="/login" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Inicia sesión</a> para comentar.
-                    </div>
-                </section>
-            </article>
-        {% endfor %}
-    {% endif %}
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Formatear fechas locales
-        document.querySelectorAll('.local-datetime').forEach(el => {
-            const utc = el.getAttribute('data-utc');
-            if (utc) {
-                const date = new Date(utc);
-                if (!isNaN(date.getTime())) {
-                    el.textContent = date.toLocaleString([], {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => { // Formatear fechas locales
+                    document.querySelectorAll('.local-datetime').forEach(el => {
+                        const utc = el.getAttribute('data-utc');
+                        if (utc) {
+                            const date = new Date(utc);
+                            if (!isNaN(date.getTime())) {
+                                el.textContent = date.toLocaleString([], {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                            }
+                        }
                     });
-                }
-            }
-        });
-
-        document.querySelectorAll('[id^="post-carousel-"]').forEach((carousel) => {
-            const slides = carousel.children;
-            if (!slides.length) return;
-
-            let currentIndex = 0;
-
-            const goToSlide = (index) => {
-                const totalSlides = slides.length;
-                const safeIndex = (index + totalSlides) % totalSlides;
-                currentIndex = safeIndex;
-                carousel.scrollTo({
-                    left: carousel.clientWidth * currentIndex,
-                    behavior: 'smooth'
+                    document.querySelectorAll('[id^="post-carousel-"]').forEach((carousel) => {
+                        const slides = carousel.children;
+                        if (! slides.length) 
+                            return;
+                        
+                        let currentIndex = 0;
+                        const goToSlide = (index) => {
+                            const totalSlides = slides.length;
+                            const safeIndex = (index + totalSlides) % totalSlides;
+                            currentIndex = safeIndex;
+                            carousel.scrollTo({
+                                left: carousel.clientWidth * currentIndex,
+                                behavior: 'smooth'
+                            });
+                        };
+                        const startAutoplay = () => {
+                            if (carousel.autoplayInterval) 
+                                return;
+                            
+                            carousel.autoplayInterval = setInterval(() => {
+                                goToSlide(currentIndex + 1);
+                            }, 3000);
+                        };
+                        const stopAutoplay = () => {
+                            if (carousel.autoplayInterval) {
+                                clearInterval(carousel.autoplayInterval);
+                                carousel.autoplayInterval = null;
+                            }
+                        };
+                        startAutoplay();
+                        carousel.addEventListener('mouseenter', stopAutoplay);
+                        carousel.addEventListener('mouseleave', startAutoplay);
+                    });
                 });
-            };
-
-            const startAutoplay = () => {
-                if (carousel.autoplayInterval) return;
-                carousel.autoplayInterval = setInterval(() => {
-                    goToSlide(currentIndex + 1);
-                }, 3000);
-            };
-
-            const stopAutoplay = () => {
-                if (carousel.autoplayInterval) {
-                    clearInterval(carousel.autoplayInterval);
-                    carousel.autoplayInterval = null;
-                }
-            };
-
-            startAutoplay();
-            carousel.addEventListener('mouseenter', stopAutoplay);
-            carousel.addEventListener('mouseleave', startAutoplay);
-        });
-    });
-</script>
-{% endblock %}
+            </script>
+        {% endblock %}
