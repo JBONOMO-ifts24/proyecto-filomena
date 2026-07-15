@@ -24,6 +24,11 @@ env.addFilter('date', (date, format) => {
   return dayjs(date).tz('America/Argentina/Buenos_Aires').format(format);
 });
 
+env.addFilter('isoDate', (date) => {
+  if (!date) return '';
+  return new Date(date).toISOString();
+});
+
 env.addFilter('pesosAR', (valor) => {
   if (valor === null || valor === undefined || valor === '') return null;
   const num = parseFloat(valor);

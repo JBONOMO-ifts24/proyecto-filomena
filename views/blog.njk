@@ -14,7 +14,7 @@
                 <header style="margin-bottom: 1.5rem;">
                     <h2 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 0.5rem;">{{ posteo.titulo }}</h2>
                     <div style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">
-                        Por {{ posteo.autor.nombre }} {{ posteo.autor.apellido }} <span style="color: var(--accent-color);">(@{{ posteo.autor.nombreUsuario }})</span> • {{ posteo.createdAt | date('DD/MM/YYYY HH:mm') }}
+                        Por {{ posteo.autor.nombre }} {{ posteo.autor.apellido }} <span style="color: var(--accent-color);">(@{{ posteo.autor.nombreUsuario }})</span> • <span class="local-datetime" data-utc="{{ posteo.createdAt | isoDate }}"></span>
                     </div>
                 </header>
 
@@ -73,7 +73,7 @@
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.3rem;">
                                         {{ comentario.autor.nombre }} {{ comentario.autor.apellido }} <span style="font-weight: normal; color: var(--accent-color);">(@{{ comentario.autor.nombreUsuario }})</span>
-                                        <span style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">{{ comentario.createdAt | date('DD/MM/YYYY HH:mm') }}</span>
+                                        <span class="local-datetime" data-utc="{{ comentario.createdAt | isoDate }}" style="font-weight: 400; color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;"></span>
                                     </div>
                                     <div class="comment-actions" style="display: none;" data-comentario-id="{{ comentario.id }}" data-autor-id="{{ comentario.autor.id }}">
                                         <button class="btn-comment-edit" style="background: none; border: none; color: var(--accent-color); font-size: 0.8rem; cursor: pointer; padding: 0 5px;">Editar</button>
@@ -112,6 +112,23 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Formatear fechas locales
+        document.querySelectorAll('.local-datetime').forEach(el => {
+            const utc = el.getAttribute('data-utc');
+            if (utc) {
+                const date = new Date(utc);
+                if (!isNaN(date.getTime())) {
+                    el.textContent = date.toLocaleString([], {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            }
+        });
+
         document.querySelectorAll('[id^="post-carousel-"]').forEach((carousel) => {
             const slides = carousel.children;
             if (!slides.length) return;
