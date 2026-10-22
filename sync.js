@@ -31,6 +31,7 @@ async function runSync() {
       await sequelize.sync({ force: true });
       console.log('✅ Tablas recreadas (force).');
     } else if (alter) {
+      console.warn('⚠️  Modo --alter activado. Esto puede fallar en MySQL si la tabla ya tiene muchos índices.');
       await sequelize.sync({ alter: true });
       console.log('✅ Tablas actualizadas (alter) — datos preservados.');
     } else {

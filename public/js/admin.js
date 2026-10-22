@@ -389,7 +389,15 @@ function renderTable(entity, data) {
                     <td style="padding: 1rem;">${item.orden ?? '-'}</td>
                     <td style="padding: 1rem;">${item.descripcion || '-'}</td>`;
         } else if (entity === 'eventos') {
+            const recurrenciaLabel = {
+                ninguna: 'Único',
+                diaria: 'Diario',
+                semanal: 'Semanal',
+                quincenal: 'Quincenal',
+                mensual: 'Mensual'
+            }[item.recurrencia] || 'Único';
             row += `<td style="padding: 1rem;">${item.tipo}</td>
+                    <td style="padding: 1rem;">${recurrenciaLabel}</td>
                     <td style="padding: 1rem;">${new Date(item.fecha_hora).toLocaleDateString()}</td>
                     <td style="padding: 1rem;">${item.lugar}</td>`;
         } else if (entity === 'posteos') {
@@ -596,7 +604,14 @@ function openModal(entity, item = null) {
     } else if (entity === 'evento') {
         const fecha = item ? new Date(item.fecha_hora).toISOString().slice(0, 16) : '';
         fields.innerHTML = `
-            <input type="text" name="tipo" placeholder="Tipo de Evento" required class="admin-input" value="${item ? item.tipo : ''}">
+            <input type="text" name="tipo" placeholder="Tipo de Evento (ej. Taller, Feria, Encuentro)" required class="admin-input" value="${item ? item.tipo : ''}">
+            <select name="recurrencia" class="admin-input">
+                <option value="ninguna" ${item && item.recurrencia === 'ninguna' ? 'selected' : ''}>Sin recurrencia</option>
+                <option value="diaria" ${item && item.recurrencia === 'diaria' ? 'selected' : ''}>Diaria</option>
+                <option value="semanal" ${item && item.recurrencia === 'semanal' ? 'selected' : ''}>Semanal</option>
+                <option value="quincenal" ${item && item.recurrencia === 'quincenal' ? 'selected' : ''}>Quincenal</option>
+                <option value="mensual" ${item && item.recurrencia === 'mensual' ? 'selected' : ''}>Mensual</option>
+            </select>
             <input type="datetime-local" name="fecha_hora" required class="admin-input" value="${fecha}">
             <input type="text" name="lugar" placeholder="Lugar" required class="admin-input" value="${item ? item.lugar : ''}">
             <input type="text" name="googleMapsUrl" placeholder="Enlace / Coordenadas Google Maps (Opcional)" class="admin-input" value="${item ? item.googleMapsUrl || '' : ''}">

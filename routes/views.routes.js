@@ -8,6 +8,7 @@ const Evento = require('../models/Evento');
 const Usuario = require('../models/Usuario');
 const Posteo = require('../models/Posteo');
 const Comentario = require('../models/Comentario');
+const { expandirEventosRecurrencia } = require('../controllers/eventoController');
 const MensajeContacto = require('../models/MensajeContacto');
 const Configuracion = require('../models/Configuracion');
 
@@ -105,11 +106,38 @@ router.get('/producto/:id', async (req, res) => {
 // Ruta de Eventos
 router.get('/eventos', async (req, res) => {
     try {
+        const filtro = req.query.filtro || 'todos';
         const eventos = await Evento.findAll({
             include: [{ model: Usuario, as: 'creador', attributes: ['nombre', 'apellido'] }],
             order: [['fecha_hora', 'ASC']]
         });
-        res.render('eventos', { eventos });
+
+        let eventosExpandidos = expandirEventosRecurrencia(eventos, 12);
+
+        if (filtro === 'hoy') {
+            const hoy = new Date();
+            const inicioDelDia = new Date(hoy);
+            inicioDelDia.setHours(0, 0, 0, 0);
+            const finDelDia = new Date(hoy);
+            finDelDia.setHours(23, 59, 59, 999);
+
+            eventosExpandidos = eventosExpandidos.filter(evento => {
+                const fechaEvento = new Date(evento.fecha_hora);
+                return !isNaN(fechaEvento.getTime()) && fechaEvento >= inicioDelDia && fechaEvento <= finDelDia;
+            });
+        } else if (filtro === '7dias') {
+            const hoy = new Date();
+            const fin = new Date(hoy);
+            fin.setDate(fin.getDate() + 7);
+            fin.setHours(23, 59, 59, 999);
+
+            eventosExpandidos = eventosExpandidos.filter(evento => {
+                const fechaEvento = new Date(evento.fecha_hora);
+                return !isNaN(fechaEvento.getTime()) && fechaEvento >= hoy && fechaEvento <= fin;
+            });
+        }
+
+        res.render('eventos', { eventos: eventosExpandidos, filtroActual: filtro });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al cargar los eventos');

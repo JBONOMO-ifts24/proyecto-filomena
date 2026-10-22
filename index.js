@@ -2,6 +2,7 @@ const express = require('express');
 const nunjucks = require('nunjucks');
 const path = require('path');
 const multer = require('multer');
+const { DataTypes } = require('sequelize');
 const dayjs = require('dayjs');
 const dayjsUtc = require('dayjs/plugin/utc');
 const dayjsTimezone = require('dayjs/plugin/timezone');
@@ -22,6 +23,11 @@ const env = nunjucks.configure('views', {
 
 env.addFilter('date', (date, format) => {
   return dayjs(date).tz('America/Argentina/Buenos_Aires').format(format);
+});
+
+env.addFilter('isoDate', (date) => {
+  if (!date) return '';
+  return new Date(date).toISOString();
 });
 
 env.addFilter('pesosAR', (valor) => {
@@ -135,11 +141,37 @@ app.use((err, req, res, next) => {
 
 // (La ruta '/' será manejada ahora por views.routes)
 
-// Sincronizar modelos y arrancar servidor
+async function ensureEventoRecurrenciaColumn() {
+  try {
+    const queryInterface = sequelize.getQueryInterface();
+    const tableInfo = await queryInterface.describeTable('Eventos').catch(() => null);
+
+    if (!tableInfo || tableInfo.recurrencia) {
+      return;
+    }
+
+    await queryInterface.addColumn('Eventos', 'recurrencia', {
+      type: DataTypes.ENUM('ninguna', 'diaria', 'semanal', 'quincenal', 'mensual'),
+      allowNull: false,
+      defaultValue: 'ninguna'
+    });
+
+    console.log('Columna recurrencia agregada a Eventos.');
+  } catch (err) {
+    if (err.message && /already exists|duplicate column/i.test(err.message)) {
+      return;
+    }
+    throw err;
+  }
+}
+
+// Sincronizar modelos y arrancar servidor.
+// Importante: no usar alter: true en cada inicio porque MySQL puede rechazar tablas
+// con demasiados índices (error ER_TOO_MANY_KEYS / max 64 keys).
 sequelize.authenticate()
   .then(() => {
     console.log('Conexión a la base de datos exitosa.');
-    return sequelize.sync();
+    return ensureEventoRecurrenciaColumn().then(() => sequelize.sync());
   })
   .then(() => {
     app.listen(PORT, () => {
