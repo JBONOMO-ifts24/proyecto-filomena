@@ -7,6 +7,11 @@ const Evento = sequelize.define('Evento', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    recurrencia: {
+        type: DataTypes.ENUM('ninguna', 'diaria', 'semanal', 'quincenal', 'mensual'),
+        allowNull: false,
+        defaultValue: 'ninguna'
+    },
     fecha_hora: {
         type: DataTypes.DATE,
         allowNull: false
