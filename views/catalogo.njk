@@ -71,9 +71,14 @@
                                                         {% endif %}
                                                     </div>
                                                     
-                                                    <!-- Nombre del Producto -->
+                                                    <!-- Nombre y precio del Producto -->
                                                     <div style="padding: 1rem; text-align: center;">
-                                                        <h4 style="color: var(--primary-color); font-size: 1.1rem; margin: 0; font-weight: 600;">{{ producto.nombre }}</h4>
+                                                        <h4 style="color: var(--primary-color); font-size: 1.1rem; margin: 0 0 0.5rem 0; font-weight: 600;">{{ producto.nombre }}</h4>
+                                                        {% if producto.precio !== null and producto.precio !== undefined %}
+                                                            <p style="margin: 0; color: var(--accent-color); font-size: 1rem; font-weight: 700;">{{ producto.precio | pesosAR }}</p>
+                                                        {% else %}
+                                                            <p style="margin: 0; color: var(--text-light); font-size: 0.9rem; font-style: italic;">Consultar precio</p>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </a>

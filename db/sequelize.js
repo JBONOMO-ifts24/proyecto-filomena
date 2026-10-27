@@ -9,6 +9,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT || 'mysql',
+    timezone: 'America/Argentina/Buenos_Aires' // <-- para que salga bien la hora en las fechas de la base de datos
   }
 );
 
