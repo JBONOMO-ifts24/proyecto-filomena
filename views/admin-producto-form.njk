@@ -1,0 +1,178 @@
+{% extends "layout.njk" %}
+
+{% block title %}{% if producto %}Editar Producto{% else %}Nuevo Producto{% endif %} - Filomena Arte y Diseño{% endblock %}
+
+{% block content %}
+<div class="container" style="margin: 2rem auto 4rem; max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div>
+            <a href="/admin" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">← Volver al panel</a>
+            <h1 style="color: var(--primary-color); margin: 0;">{% if producto %}Editar producto{% else %}Nuevo producto{% endif %}</h1>
+        </div>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-sm);">
+        <form id="admin-product-form" data-mode="{{ mode }}" data-id="{{ producto.id if producto else '' }}" data-modelo-id="{{ producto.modeloProductoId if producto else '' }}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="form-field">
+                <label for="producto-nombre">Nombre</label>
+                <input id="producto-nombre" type="text" name="nombre" placeholder="Nombre" required class="admin-input" value="{{ producto.nombre if producto else '' }}">
+            </div>
+
+            <div class="form-field">
+                <label>Descripción</label>
+                <div id="quill-editor" class="quill-field" style="background: white; border-radius: 8px; border: 1px solid var(--glass-border); min-height: 220px; margin-bottom: 0.5rem;"></div>
+                <input type="hidden" name="descripcion" id="hidden-descripcion" value="{{ producto.descripcion if producto else '' }}">
+            </div>
+
+            <div class="form-field">
+                <div class="two-column-fields">
+                    <div>
+                        <label for="producto-cantidad">Cantidad</label>
+                        <input id="producto-cantidad" type="number" name="cantidad" placeholder="Cantidad" required class="admin-input" value="{{ producto.cantidad if producto else '' }}">
+                    </div>
+                    <div>
+                        <label for="producto-precio">Precio</label>
+                        <input id="producto-precio" type="number" name="precio" placeholder="Precio" step="0.01" class="admin-input" value="{{ producto.precio if producto else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label class="checkbox-field">
+                    <input type="checkbox" name="visible" {% if producto and producto.visible %}checked{% elif not producto %}checked{% endif %}>
+                    <span>Visible en catálogo</span>
+                </label>
+            </div>
+
+            <div class="form-field">
+                <label for="select-modelo">Modelo</label>
+                <select id="select-modelo" name="modeloProductoId" required class="admin-input">
+                    <option value="">Cargando modelos...</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label for="producto-imagenes">Imágenes (máx. 3)</label>
+                <input id="producto-imagenes" type="file" name="imagenes" class="admin-input" multiple accept="image/*">
+                {% if producto and producto.imagenes and producto.imagenes.length > 0 %}
+                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem; margin-bottom: 1rem;">Marca la imagen principal con la estrella. Deja el campo de archivo vacío para conservar las actuales.</small>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;">
+                        {% for imagen in producto.imagenes %}
+                            <div style="position: relative; width: 80px; height: 80px; border-radius: 10px; overflow: hidden; border: {{ '3px solid var(--accent-color)' if imagen.es_principal else '1px solid var(--glass-border)' }}; background: rgba(0,0,0,0.03);">
+                                <img src="{{ imagen.url }}" alt="Imagen del producto" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                {% if imagen.es_principal %}
+                                    <span style="position: absolute; top: 5px; right: 5px; background: var(--accent-color); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">★</span>
+                                {% else %}
+                                    <button type="button" onclick="setPrincipalImage({{ imagen.id }}, {{ producto.id }})" style="position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); color: white; border: none; border-radius: 999px; padding: 4px 8px; font-size: 8px; cursor: pointer; font-weight: 600; white-space: nowrap;">Principal</button>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">Puedes subir hasta 3 imágenes para este producto.</small>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <button type="submit" class="btn-primary">{% if producto %}Guardar cambios{% else %}Crear producto{% endif %}</button>
+                <a href="/admin" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="unauthorized-message" style="display: none; text-align: center; margin-top: 5rem;">
+    <h1 style="color: var(--primary-color);">Acceso Restringido</h1>
+    <p style="color: var(--text-light);">No tienes permisos para acceder a esta sección.</p>
+    <a href="/" class="btn-primary" style="display: inline-block; margin-top: 1rem;">Volver al Inicio</a>
+</div>
+
+<script src="/js/admin.js"></script>
+
+<style>
+    .btn-secondary {
+        display: inline-block;
+        padding: 0.75rem 1.2rem;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255,255,255,0.65);
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+    .form-field {
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem 1rem 1.1rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        transition: all 0.2s ease;
+    }
+    .form-field:nth-child(1) {
+        background: rgba(255, 240, 245, 0.9);
+        border-color: rgba(212, 123, 162, 0.35);
+    }
+    .form-field:nth-child(2) {
+        background: rgba(245, 240, 255, 0.9);
+        border-color: rgba(153, 112, 214, 0.35);
+    }
+    .form-field:nth-child(3) {
+        background: rgba(240, 250, 246, 0.9);
+        border-color: rgba(91, 164, 136, 0.35);
+    }
+    .form-field:nth-child(4) {
+        background: rgba(255, 248, 234, 0.9);
+        border-color: rgba(214, 148, 68, 0.35);
+    }
+    .form-field:nth-child(5) {
+        background: rgba(240, 246, 255, 0.9);
+        border-color: rgba(92, 128, 205, 0.35);
+    }
+    .form-field:nth-child(6) {
+        background: rgba(247, 244, 233, 0.9);
+        border-color: rgba(167, 128, 74, 0.35);
+    }
+    .form-field label {
+        display: block;
+        margin-bottom: 0.55rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    .two-column-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+    .checkbox-field {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0 !important;
+        cursor: pointer;
+    }
+    .checkbox-field input {
+        width: 1rem;
+        height: 1rem;
+        accent-color: var(--accent-color);
+    }
+    .admin-input {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 8px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.8);
+        font-family: inherit;
+        font-size: 0.95rem;
+    }
+    .admin-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(191, 67, 216, 0.12);
+    }
+</style>
+{% endblock %}
