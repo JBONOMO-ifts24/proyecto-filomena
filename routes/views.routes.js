@@ -184,6 +184,50 @@ router.get('/admin', (req, res) => {
     res.render('admin');
 });
 
+router.get('/admin/productos/nuevo', async (req, res) => {
+    try {
+        const modelos = await ModeloProducto.findAll({
+            include: [{ model: TipoProducto, as: 'tipo_producto', attributes: ['id', 'nombre'] }],
+            order: [['orden', 'ASC'], ['nombre', 'ASC']]
+        });
+
+        res.render('admin-producto-form', {
+            producto: null,
+            modelos,
+            mode: 'create'
+        });
+    } catch (error) {
+        console.error('Error al cargar la creación de producto:', error);
+        res.status(500).send('Error al cargar el formulario de producto');
+    }
+});
+
+router.get('/admin/productos/:id/editar', async (req, res) => {
+    try {
+        const producto = await Producto.findByPk(req.params.id, {
+            include: [{ model: Imagen, as: 'imagenes' }]
+        });
+
+        if (!producto) {
+            return res.status(404).send('Producto no encontrado');
+        }
+
+        const modelos = await ModeloProducto.findAll({
+            include: [{ model: TipoProducto, as: 'tipo_producto', attributes: ['id', 'nombre'] }],
+            order: [['orden', 'ASC'], ['nombre', 'ASC']]
+        });
+
+        res.render('admin-producto-form', {
+            producto,
+            modelos,
+            mode: 'edit'
+        });
+    } catch (error) {
+        console.error('Error al cargar la edición de producto:', error);
+        res.status(500).send('Error al cargar el formulario de edición');
+    }
+});
+
 // Ruta de Login
 router.get('/login', (req, res) => {
     res.render('login');

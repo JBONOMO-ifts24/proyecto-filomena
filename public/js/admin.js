@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unauthorized = document.getElementById('unauthorized-message');
 
     if (!token) {
-        unauthorized.style.display = 'block';
+        if (unauthorized) unauthorized.style.display = 'block';
         return;
     }
 
@@ -12,16 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (payload.rol !== 'admin') {
-            unauthorized.style.display = 'block';
+            if (unauthorized) unauthorized.style.display = 'block';
             return;
         }
     } catch (e) {
-        unauthorized.style.display = 'block';
+        if (unauthorized) unauthorized.style.display = 'block';
         return;
     }
 
-    // Si es admin, mostrar dashboard
-    dashboard.style.display = 'block';
+    // Si es admin, mostrar dashboard si existe
+    if (dashboard) {
+        dashboard.style.display = 'block';
+    }
 
     // Lógica de Pestañas (Tabs)
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -139,8 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-
                 if (response.ok) {
+                    const isStandaloneProductPage = entity === 'producto' && !document.getElementById('admin-dashboard');
+                    if (isStandaloneProductPage) {
+                        window.location.href = '/admin';
+                        return;
+                    }
+
                     closeModal();
                     // Refresh de tabla según la entidad
                     if (entity === 'usuario') loadData('usuarios');
@@ -151,6 +158,93 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = await response.json();
                     alert(result.error || 'Error en la operación');
                 }
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión');
+            }
+        });
+    }
+
+    // Uso standalone del formulario de producto
+    const productFormStandalone = document.getElementById('admin-product-form');
+    if (productFormStandalone) {
+        initializeStandaloneProductForm();
+
+        productFormStandalone.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInputs = productFormStandalone.querySelectorAll('input[type="file"]');
+            for (const input of fileInputs) {
+                if (input.files) {
+                    for (const file of input.files) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`La imagen "${file.name}" supera el límite de 2MB permitido.`);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            const hiddenDescripcion = document.getElementById('hidden-descripcion');
+            const fallbackDescripcion = document.getElementById('fallback-descripcion');
+            if (window.quillInstance && hiddenDescripcion) {
+                hiddenDescripcion.value = window.quillInstance.root.innerHTML || '';
+            } else if (fallbackDescripcion && hiddenDescripcion) {
+                hiddenDescripcion.value = fallbackDescripcion.value;
+            }
+
+            const formData = new FormData(productFormStandalone);
+            const data = Object.fromEntries(formData.entries());
+            const entity = productFormStandalone.getAttribute('data-entity') || 'producto';
+            const mode = productFormStandalone.getAttribute('data-mode') || 'create';
+            const id = productFormStandalone.getAttribute('data-id');
+            const token = localStorage.getItem('token');
+
+            if (entity === 'producto') {
+                const visibleValue = formData.has('visible') ? 'true' : 'false';
+                formData.set('visible', visibleValue);
+                data.visible = visibleValue;
+            }
+
+            if (data.precio === '') {
+                data.precio = null;
+            }
+
+            let url = `/api/${entity}s`;
+            let method = mode === 'edit' ? 'PUT' : 'POST';
+
+            if (mode === 'edit') {
+                url += `/${id}`;
+            }
+
+            delete formData['Content-Type'];
+            const body = formData;
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers,
+                    body
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                    return;
+                }
+
+                if (response.ok) {
+                    alert(mode === 'edit' ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.');
+                    window.location.href = '/admin';
+                    return;
+                }
+
+                const result = await response.json();
+                alert(result.error || 'Error en la operación');
             } catch (err) {
                 console.error(err);
                 alert('Error de conexión');
@@ -569,8 +663,86 @@ async function duplicateItem(entity, id) {
     }
 }
 
+function initializeStandaloneProductForm() {
+    const productForm = document.getElementById('admin-product-form');
+    if (!productForm) return;
+
+    productForm.setAttribute('data-entity', 'producto');
+    productForm.setAttribute('data-mode', productForm.getAttribute('data-mode') || 'create');
+    productForm.setAttribute('data-id', productForm.getAttribute('data-id') || '');
+
+    const token = localStorage.getItem('token');
+    const modelSelect = document.getElementById('select-modelo');
+    if (modelSelect) {
+        fetch('/api/modeloproductos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(response => response.json())
+            .then(modelos => {
+                const selectedId = productForm.getAttribute('data-id');
+                const selectedValue = productForm.getAttribute('data-modelo-id');
+                modelSelect.innerHTML = '<option value="">-- Seleccionar Modelo --</option>';
+
+                modelos.forEach(modelo => {
+                    const selected = Number(selectedValue) === modelo.id || (selectedId && Number(selectedId) === modelo.id) ? 'selected' : '';
+                    modelSelect.innerHTML += `<option value="${modelo.id}" ${selected}>${modelo.nombre}</option>`;
+                });
+            })
+            .catch(() => {
+                modelSelect.innerHTML = '<option value="">Error al cargar modelos</option>';
+            });
+    }
+
+    if (typeof Quill !== 'undefined') {
+        if (window.quillInstance) {
+            window.quillInstance = null;
+        }
+
+        window.quillInstance = new Quill('#quill-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
+
+        const descripcionActual = document.getElementById('hidden-descripcion')?.value || '';
+        if (descripcionActual) {
+            window.quillInstance.root.innerHTML = descripcionActual;
+        }
+
+        const syncToHidden = () => {
+            const hiddenField = document.getElementById('hidden-descripcion');
+            if (hiddenField) {
+                hiddenField.value = window.quillInstance.root.innerHTML || '';
+            }
+        };
+
+        window.quillInstance.on('text-change', syncToHidden);
+        syncToHidden();
+    } else {
+        const editor = document.getElementById('quill-editor');
+        if (editor) {
+            const descripcionActual = document.getElementById('hidden-descripcion')?.value || '';
+            editor.innerHTML = '<textarea id="fallback-descripcion" name="descripcion" placeholder="Descripción" class="admin-input" style="width: 100%; min-height: 200px;">' + descripcionActual + '</textarea>';
+        }
+    }
+}
+
 // Modal Logic
 function openModal(entity, item = null) {
+    if (entity === 'producto') {
+        const targetUrl = item ? `/admin/productos/${item.id}/editar` : '/admin/productos/nuevo';
+        window.location.href = targetUrl;
+        return;
+    }
+
     const modal = document.getElementById('admin-modal');
     const fields = document.getElementById('form-fields');
     const title = document.getElementById('modal-title');
@@ -862,7 +1034,10 @@ function openModal(entity, item = null) {
 
 
 function closeModal() {
-    document.getElementById('admin-modal').style.display = 'none';
+    const modal = document.getElementById('admin-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 async function setPrincipalImage(imageId, productoId) {
@@ -881,10 +1056,15 @@ async function setPrincipalImage(imageId, productoId) {
         }
 
         if (response.ok) {
-            // Recargar datos para ver el cambio en el modal (o cerrar y recargar tabla)
-            // Por simplicidad, recargamos la tabla y cerramos el modal
+            if (document.getElementById('admin-product-form')) {
+                window.location.reload();
+                return;
+            }
+
             closeModal();
-            loadData('productos');
+            if (typeof loadData === 'function') {
+                loadData('productos');
+            }
         } else {
             alert('Error al establecer imagen principal');
         }
