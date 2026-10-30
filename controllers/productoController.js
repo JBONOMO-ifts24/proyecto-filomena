@@ -11,19 +11,80 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+const MAX_PRODUCT_IMAGES = 7;
+
+const validateImageUploadLimit = (existingImagesCount, incomingFilesCount, maxImages = MAX_PRODUCT_IMAGES) => {
+  const remainingSlots = maxImages - existingImagesCount;
+
+  if (incomingFilesCount > remainingSlots) {
+    if (remainingSlots <= 0) {
+      throw new Error(`Este producto ya tiene el máximo de ${maxImages} imágenes.`);
+    }
+
+    throw new Error(`Solo puedes agregar ${remainingSlots} imagen${remainingSlots === 1 ? '' : 'es'} más. El producto ya tiene ${existingImagesCount} de ${maxImages}.`);
+  }
+
+  return remainingSlots;
+};
+
+exports.validateImageUploadLimit = validateImageUploadLimit;
+
+const normalizeYoutubeUrl = (youtubeUrl) => {
+  if (!youtubeUrl) return null;
+
+  const trimmed = youtubeUrl.trim();
+  if (!trimmed) return null;
+
+  try {
+    const url = new URL(trimmed);
+
+    if (url.hostname.includes('youtube.com')) {
+      const videoId = url.searchParams.get('v');
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+
+      const shortsMatch = url.pathname.match(/\/shorts\/([^/?]+)/);
+      if (shortsMatch && shortsMatch[1]) return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+    }
+
+    if (url.hostname.includes('youtu.be')) {
+      const videoId = url.pathname.replace('/', '').split('/')[0];
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (trimmed.includes('youtube.com/embed/')) {
+      return trimmed;
+    }
+  } catch (err) {
+    return null;
+  }
+
+  return null;
+};
+
+exports.normalizeYoutubeUrl = normalizeYoutubeUrl;
 
 exports.crearProducto = async (req, res) => {
   try {
     if (req.body.precio === '') req.body.precio = null;
-    const { nombre, descripcion, cantidad, modeloProductoId, precio, visible } = req.body;
+    const { nombre, descripcion, cantidad, modeloProductoId, precio, visible, youtube_url } = req.body;
     const codigo = req.body.codigo || `PROD-${Date.now()}`;
     const visibleBoolean = visible === 'false' || visible === false ? false : true;
+    const normalizedYoutubeUrl = youtube_url === '' ? null : normalizeYoutubeUrl(youtube_url);
+
+    if (youtube_url && !normalizedYoutubeUrl) {
+      return res.status(400).json({ error: 'URL de YouTube inválida' });
+    }
+
+    if (req.files && req.files.length > MAX_PRODUCT_IMAGES) {
+      return res.status(400).json({ error: `Máximo ${MAX_PRODUCT_IMAGES} imágenes por producto.` });
+    }
+
     // Verificar que el modelo exista
     const modelo = await ModeloProducto.findByPk(modeloProductoId);
     if (!modelo) {
       return res.status(400).json({ error: 'Modelo de producto no válido' });
     }
-    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId, precio, visible: visible !== undefined ? visibleBoolean : true });
+    const producto = await Producto.create({ codigo, nombre, descripcion, cantidad, modeloProductoId, precio, youtube_url: normalizedYoutubeUrl, visible: visible !== undefined ? visibleBoolean : true });
 
     // Si hay imágenes, crearlas y asociarlas
     if (req.files && req.files.length > 0) {
@@ -69,7 +130,17 @@ exports.modificarProducto = async (req, res) => {
   try {
     if (req.body.precio === '') req.body.precio = null;
     const { id } = req.params;
-    const { modeloProductoId, nombre } = req.body;
+    const { modeloProductoId, nombre, youtube_url } = req.body;
+    const normalizedYoutubeUrl = youtube_url === '' ? null : normalizeYoutubeUrl(youtube_url);
+
+    if (youtube_url && !normalizedYoutubeUrl) {
+      return res.status(400).json({ error: 'URL de YouTube inválida' });
+    }
+
+    if (req.files && req.files.length > MAX_PRODUCT_IMAGES) {
+      return res.status(400).json({ error: `Máximo ${MAX_PRODUCT_IMAGES} imágenes por producto.` });
+    }
+
     if (req.body.visible !== undefined) {
       req.body.visible = req.body.visible === 'false' || req.body.visible === false ? false : true;
     }
@@ -79,23 +150,41 @@ exports.modificarProducto = async (req, res) => {
         return res.status(400).json({ error: 'Modelo de producto no válido' });
       }
     }
-    const [actualizados] = await Producto.update(req.body, { where: { id } });
+    const [actualizados] = await Producto.update({ ...req.body, youtube_url: normalizedYoutubeUrl }, { where: { id } });
     if (!actualizados) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    // Si hay nuevas imágenes, borrar las anteriores (opcional, según preferencia de negocio) 
-    // y crear las nuevas. Por ahora, si sube nuevas, reemplazamos las anteriores.
-    // Si hay nuevas imágenes, borrar las anteriores y crear las nuevas.
     if (req.files && req.files.length > 0) {
-      await Imagen.destroy({ where: { productoId: id } });
-      const imagenes = req.files.map((file, index) => ({
+      const productoActual = await Producto.findByPk(id, { include: [{ model: Imagen, as: 'imagenes' }] });
+      const existingImagesCount = productoActual && productoActual.imagenes ? productoActual.imagenes.length : 0;
+
+      try {
+        validateImageUploadLimit(existingImagesCount, req.files.length);
+      } catch (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      const tienePrincipal = productoActual && productoActual.imagenes && productoActual.imagenes.some((img) => img.es_principal);
+      const imagenes = req.files.map((file) => ({
         url: `/uploads/${file.filename}`,
         descripcion: nombre || 'Imagen de producto',
         productoId: id,
-        es_principal: index === 0 // La primera es principal por defecto
+        es_principal: false
       }));
       await Imagen.bulkCreate(imagenes);
+
+      if (!tienePrincipal) {
+        const primerasImagenes = await Imagen.findAll({
+          where: { productoId: id },
+          order: [['id', 'ASC']]
+        });
+
+        if (primerasImagenes.length > 0) {
+          await Imagen.update({ es_principal: false }, { where: { productoId: id } });
+          await primerasImagenes[0].update({ es_principal: true });
+        }
+      }
     }
 
     const productoActualizado = await Producto.findByPk(id, { include: [{ model: Imagen, as: 'imagenes' }] });
@@ -157,6 +246,7 @@ exports.duplicarProducto = async (req, res) => {
       cantidad: 0, // Stock en 0 por defecto
       modeloProductoId: productoOriginal.modeloProductoId,
       precio: productoOriginal.precio,
+      youtube_url: productoOriginal.youtube_url,
       visible: false // Invisible por defecto
     });
     

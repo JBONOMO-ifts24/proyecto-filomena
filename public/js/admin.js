@@ -875,9 +875,11 @@ function openModal(entity, item = null) {
             <select name="modeloProductoId" required class="admin-input" id="select-modelo">
                 <option value="">Cargando modelos...</option>
             </select>
-            <label style="display: block; margin-top: 1rem; margin-bottom: 0.5rem;">Imágenes (Máx. 3):</label>
+            <label style="display: block; margin-top: 1rem; font-weight: 600; color: var(--primary-color);">Video de YouTube (opcional)</label>
+            <input type="url" name="youtube_url" placeholder="https://www.youtube.com/shorts/..." class="admin-input" value="${item ? item.youtube_url || '' : ''}">
+            <label style="display: block; margin-top: 1rem; margin-bottom: 0.5rem;">Imágenes (Máx. 7):</label>
             <input type="file" name="imagenes" class="admin-input" multiple accept="image/*">
-            <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">Si seleccionas nuevas, se reemplazarán las anteriores.</small>
+            <small style="color: var(--text-light); display: block; margin-bottom: 1rem;">Si seleccionas nuevas, se reemplazarán las anteriores. Podés subir hasta 7 imágenes.</small>
         `;
 
         // Inicializar Quill para la descripción con pequeño delay
@@ -988,6 +990,7 @@ function openModal(entity, item = null) {
 
                 imgDiv.innerHTML = `
                     <img src="${img.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <button type="button" onclick="deleteProductImage(${img.id}, ${item.id})" title="Eliminar imagen" style="position: absolute; top: 4px; left: 4px; width: 18px; height: 18px; border: none; border-radius: 50%; background: rgba(220, 53, 69, 0.9); color: white; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">×</button>
                     ${img.es_principal ?
                         '<span style="position: absolute; top: 2px; right: 2px; background: var(--accent-color); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px;">★</span>' :
                         `<button type="button" onclick="setPrincipalImage(${img.id}, ${item.id})" style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 4px; padding: 2px 5px; font-size: 8px; cursor: pointer;">Principal</button>`
@@ -1070,6 +1073,47 @@ async function setPrincipalImage(imageId, productoId) {
         }
     } catch (err) {
         console.error(err);
+    }
+}
+
+async function deleteProductImage(imageId, productoId) {
+    const token = localStorage.getItem('token');
+
+    if (!confirm('¿Querés eliminar esta imagen del producto?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/imagenes/${imageId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            alert('Tu sesión ha expirado o no tienes permisos. Por favor, vuelve a iniciar sesión.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
+        if (response.ok) {
+            if (document.getElementById('admin-product-form')) {
+                window.location.reload();
+                return;
+            }
+
+            closeModal();
+            if (typeof loadData === 'function') {
+                loadData('productos');
+            }
+            return;
+        }
+
+        const result = await response.json();
+        alert(result.error || 'Error al eliminar la imagen');
+    } catch (err) {
+        console.error(err);
+        alert('No se pudo eliminar la imagen');
     }
 }
 
@@ -1172,6 +1216,7 @@ window.toggleUserStatus = toggleUserStatus;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.setPrincipalImage = setPrincipalImage;
+window.deleteProductImage = deleteProductImage;
 window.descargarStock = descargarStock;
 window.descargarCatalogo = descargarCatalogo;
 window.duplicateItem = duplicateItem;

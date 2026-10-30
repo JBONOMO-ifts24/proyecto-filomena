@@ -165,13 +165,38 @@ async function ensureEventoRecurrenciaColumn() {
   }
 }
 
+async function ensureProductoYoutubeColumn() {
+  try {
+    const queryInterface = sequelize.getQueryInterface();
+    const tableInfo = await queryInterface.describeTable('Productos').catch(() => null);
+
+    if (!tableInfo || tableInfo.youtube_url) {
+      return;
+    }
+
+    await queryInterface.addColumn('Productos', 'youtube_url', {
+      type: DataTypes.STRING,
+      allowNull: true
+    });
+
+    console.log('Columna youtube_url agregada a Productos.');
+  } catch (err) {
+    if (err.message && /already exists|duplicate column/i.test(err.message)) {
+      return;
+    }
+    throw err;
+  }
+}
+
 // Sincronizar modelos y arrancar servidor.
 // Importante: no usar alter: true en cada inicio porque MySQL puede rechazar tablas
 // con demasiados índices (error ER_TOO_MANY_KEYS / max 64 keys).
 sequelize.authenticate()
   .then(() => {
     console.log('Conexión a la base de datos exitosa.');
-    return ensureEventoRecurrenciaColumn().then(() => sequelize.sync());
+    return ensureEventoRecurrenciaColumn()
+      .then(() => ensureProductoYoutubeColumn())
+      .then(() => sequelize.sync());
   })
   .then(() => {
     app.listen(PORT, () => {

@@ -38,13 +38,30 @@ exports.eliminarImagen = async (req, res) => {
     if (!imagen) {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
-    // Eliminar archivo físico
+
+    const productoId = imagen.productoId;
+    const eraPrincipal = imagen.es_principal;
+
     const fs = require('fs');
     const filePath = path.join(__dirname, '../uploads', path.basename(imagen.url));
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
+
     await imagen.destroy();
+
+    if (eraPrincipal) {
+      const imagenesRestantes = await Imagen.findAll({
+        where: { productoId },
+        order: [['id', 'ASC']]
+      });
+
+      if (imagenesRestantes.length > 0) {
+        await Imagen.update({ es_principal: false }, { where: { productoId } });
+        await imagenesRestantes[0].update({ es_principal: true });
+      }
+    }
+
     res.json({ mensaje: 'Imagen eliminada' });
   } catch (err) {
     res.status(500).json({ error: err.message });

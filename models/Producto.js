@@ -25,6 +25,10 @@ const Producto = sequelize.define('Producto', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true
   },
+  youtube_url: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   visible: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
